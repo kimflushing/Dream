@@ -1,22 +1,29 @@
 const loginForm = document.getElementById("loginForm");
 
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
+loginForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    try {
+        alert("로그인 시작");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
 
-    if (error) {
-      alert(error.message);
-      return;
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            alert("에러: " + error.message);
+            return;
+        }
+
+        alert("로그인 성공!");
+
+        location.href = "index.html";
+
+    } catch (err) {
+        alert("오류: " + err.message);
     }
-
-    location.href = "index.html";
-  });
-}
+});
