@@ -43,6 +43,9 @@ signupForm.addEventListener("submit", async (e) => {
     button.textContent = "가입 중...";
 
     try {
+        alert("회원가입 시작");
+        
+        alert("signUp 실행");
 
         const { error } = await supabase.auth.signUp({
 
@@ -60,7 +63,7 @@ signupForm.addEventListener("submit", async (e) => {
             }
 
         });
-
+alert("signUp 완료");
         if (error) {
 
             alert(error.message);
