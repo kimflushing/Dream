@@ -1,3 +1,5 @@
+alert(typeof supabase);
+alert(typeof supabase.auth);
 // =========================
 // Dream Archive Signup
 // =========================
