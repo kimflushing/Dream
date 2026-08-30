@@ -31,7 +31,7 @@ signupForm.addEventListener("submit", async (e) => {
         alert("비밀번호가 일치하지 않습니다.");
         return;
     }
-
+alert("회원가입 시작");
     const { error } = await db.auth.signUp({
         email,
         password,
@@ -41,7 +41,7 @@ signupForm.addEventListener("submit", async (e) => {
             }
         }
     });
-
+alert("signUp 실행");
     if (error) {
         alert(error.message);
         return;
