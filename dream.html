@@ -4,23 +4,16 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dream Archive</title>
 
 <link rel="stylesheet" href="dream.css">
 
-<link rel="preconnect"
-href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
-rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 
 </head>
 
@@ -29,9 +22,7 @@ rel="stylesheet">
 <div class="background">
 
 <div class="blur one"></div>
-
 <div class="blur two"></div>
-
 <div class="blur three"></div>
 
 </div>
@@ -44,7 +35,13 @@ rel="stylesheet">
 
 </button>
 
-<div>
+<h1>
+
+Dream Archive
+
+</h1>
+
+<div class="headerButton">
 
 <button id="saveBtn">
 
@@ -52,11 +49,19 @@ rel="stylesheet">
 
 </button>
 
+<button id="settingBtn">
+
+⚙️
+
+</button>
+
 </div>
 
 </header>
 
-<section class="profile">
+<main>
+
+<section class="profileCard">
 
 <div class="imageArea">
 
@@ -64,29 +69,43 @@ rel="stylesheet">
 
 <img
 id="previewImage"
-
 src="default.png">
 
 </label>
 
 <input
 type="file"
-
 id="mainImage"
-
 accept="image/*"
-
 hidden>
 
 </div>
 
-<div class="dreamInfo">
+<div class="profileInfo">
+
+<select id="archiveType">
+
+<option value="dream">
+
+❤️ 드림
+
+</option>
+
+<option value="couple">
+
+💍 자컾
+
+</option>
+
+</select>
 
 <input
-
 id="dreamName"
+placeholder="이름">
 
-placeholder="Dream Name">
+<input
+type="date"
+id="startDate">
 
 <p id="dday">
 
@@ -94,16 +113,8 @@ D+0
 
 </p>
 
-<input
-
-type="date"
-
-id="startDate">
-
 <textarea
-
 id="intro"
-
 placeholder="한줄 소개">
 
 </textarea>
@@ -111,72 +122,49 @@ placeholder="한줄 소개">
 </div>
 
 </section>
-
 <!-- ===========================
 탭 메뉴
 =========================== -->
 
 <nav class="tabMenu">
 
-<button class="tab active"
+<button class="tab active" data-tab="appearance">
 
-data-tab="appearance">
-
-외관
+👤 외관
 
 </button>
 
-<button class="tab"
+<button class="tab" data-tab="setting">
 
-data-tab="setting">
-
-설정
+⚙️ 설정
 
 </button>
 
-<button class="tab"
+<button class="tab" data-tab="story">
 
-data-tab="story">
-
-서사
+📖 서사
 
 </button>
 
-<button class="tab"
+<button class="tab" data-tab="relation">
 
-data-tab="relation">
-
-관계
+💞 관계
 
 </button>
 
-<button class="tab"
+<button class="tab" data-tab="au">
 
-data-tab="au">
-
-AU
+🌎 AU
 
 </button>
 
-<button class="tab"
+<button class="tab" data-tab="commission">
 
-data-tab="commission">
-
-커미션
-
-</button>
-
-<button class="tab"
-
-data-tab="log">
-
-로그
+🎨 커미션
 
 </button>
 
 </nav>
-
-
 
 <!-- ===========================
 컨텐츠
@@ -186,180 +174,458 @@ data-tab="log">
 
 <!-- 외관 -->
 
-<div class="tabContent active"
+<section class="tabContent active" id="appearance">
 
-id="appearance">
+<h2>외관</h2>
 
-<h2>
+<input
+id="characterName"
+placeholder="캐릭터 이름">
 
-외관
+<input
+id="height"
+placeholder="키">
 
-</h2>
+<input
+id="birthday"
+placeholder="생일">
+
+<input
+id="age"
+placeholder="나이">
+
+<input
+id="mbti"
+placeholder="MBTI">
+
+<input
+id="job"
+placeholder="직업">
 
 <textarea
-
 id="appearanceText"
-
-placeholder="외관을 작성해주세요.">
+placeholder="외관 설명">
 
 </textarea>
 
-</div>
-
-
+</section>
 
 <!-- 설정 -->
 
-<div class="tabContent"
+<section class="tabContent" id="setting">
 
-id="setting">
+<h2>설정</h2>
 
-<h2>
+<input
+id="worldName"
+placeholder="세계관">
 
-설정
+<input
+id="group"
+placeholder="소속">
 
-</h2>
+<input
+id="ability"
+placeholder="능력">
 
 <textarea
-
 id="settingText"
-
-placeholder="설정을 작성해주세요.">
+placeholder="설정을 작성하세요.">
 
 </textarea>
 
-</div>
-
-
+</section>
 
 <!-- 서사 -->
 
-<div class="tabContent"
+<section class="tabContent" id="story">
 
-id="story">
-
-<h2>
-
-서사
-
-</h2>
+<h2>서사</h2>
 
 <textarea
-
 id="storyText"
-
-placeholder="서사를 작성해주세요.">
+placeholder="서사를 작성하세요.">
 
 </textarea>
 
-</div>
-
-
+</section>
 
 <!-- 관계 -->
 
-<div class="tabContent"
+<section class="tabContent" id="relation">
 
-id="relation">
+<div class="sectionHeader">
 
 <h2>
 
-관계
+💞 관계
 
 </h2>
 
-<textarea
+<button id="addRelation">
 
-id="relationText"
+＋ 관계 추가
 
-placeholder="관계를 작성해주세요.">
-
-</textarea>
+</button>
 
 </div>
 
+<div id="relationList">
 
+</div>
 
-<!-- AU -->
+</section>
+<!-- ===========================
+관계 타임라인
+=========================== -->
 
-<div class="tabContent"
+<div class="timelineSection">
 
-id="au">
+<div class="sectionHeader">
 
 <h2>
 
+📜 관계 타임라인
+
+</h2>
+
+<button id="addTimeline">
+
+＋ 사건 추가
+
+</button>
+
+</div>
+
+<div id="timelineList">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===========================
 AU
+=========================== -->
+
+<section class="tabContent" id="au">
+
+<div class="sectionHeader">
+
+<h2>
+
+🌎 AU
 
 </h2>
 
-<textarea
+<button id="addAU">
 
-id="auText"
+＋ AU 추가
 
-placeholder="AU를 작성해주세요.">
-
-</textarea>
+</button>
 
 </div>
 
+<div id="auList">
 
+</div>
 
-<!-- 커미션 -->
+</section>
 
-<div class="tabContent"
+<!-- ===========================
+관계 Template
+=========================== -->
+
+<template id="relationTemplate">
+
+<div class="relationCard">
+
+<div class="relationImage">
+
+<img class="relationPreview" src="default.png">
+
+<input
+type="file"
+class="relationPhoto"
+accept="image/*"
+hidden>
+
+</div>
+
+<div class="relationInfo">
+
+<input
+class="relationName"
+placeholder="캐릭터 이름">
+
+<input
+class="relationType"
+placeholder="관계 (연인, 친구 등)">
+
+<textarea
+class="relationDescription"
+placeholder="관계 설명">
+
+</textarea>
+
+<textarea
+class="relationMemo"
+placeholder="메모">
+
+</textarea>
+
+<button class="deleteRelation">
+
+삭제
+
+</button>
+
+</div>
+
+</div>
+
+</template>
+
+<!-- ===========================
+Timeline Template
+=========================== -->
+
+<template id="timelineTemplate">
+
+<div class="timelineCard">
+
+<input
+type="date"
+class="timelineDate">
+
+<input
+class="timelineTitle"
+placeholder="사건 제목">
+
+<textarea
+class="timelineContent"
+placeholder="내용">
+
+</textarea>
+
+<button class="deleteTimeline">
+
+삭제
+
+</button>
+
+</div>
+
+</template>
+<!-- ===========================
+AU Template
+=========================== -->
+
+<template id="auTemplate">
+
+<div class="auCard">
+
+<div class="auImageArea">
+
+<img
+class="auPreview"
+src="default.png">
+
+<input
+type="file"
+class="auImage"
+accept="image/*"
+hidden>
+
+</div>
+
+<div class="auInfo">
+
+<input
+class="auTitle"
+placeholder="AU 이름">
+
+<input
+class="auWorld"
+placeholder="세계관">
+
+<textarea
+class="auDescription"
+placeholder="AU 설명">
+
+</textarea>
+
+<textarea
+class="auMemo"
+placeholder="메모">
+
+</textarea>
+
+<div class="galleryArea">
+
+<h4>
+
+갤러리
+
+</h4>
+
+<input
+type="file"
+class="auGallery"
+accept="image/*"
+multiple>
+
+<div class="galleryPreview">
+
+</div>
+
+</div>
+
+<button class="deleteAU">
+
+삭제
+
+</button>
+
+</div>
+
+</div>
+
+</template>
+
+<!-- ===========================
+커미션
+=========================== -->
+
+<section class="tabContent"
 
 id="commission">
 
-<h2>
-
-커미션
-
-</h2>
-
-<textarea
-
-id="commissionText"
-
-placeholder="커미션 정보를 작성해주세요.">
-
-</textarea>
-
-</div>
-
-
-
-<!-- 로그 -->
-
-<div class="tabContent"
-
-id="log">
+<div class="sectionHeader">
 
 <h2>
 
-로그
+🎨 커미션
 
 </h2>
 
-<textarea
+<button id="addCommission">
 
-id="logText"
+＋ 커미션 추가
 
-placeholder="로그를 작성해주세요.">
-
-</textarea>
+</button>
 
 </div>
 
+<div id="commissionList">
+
 </div>
+
+</section>
 <!-- ===========================
-저장 상태
+Commission Template
+=========================== -->
+
+<template id="commissionTemplate">
+
+<div class="commissionCard">
+
+<div class="commissionImageArea">
+
+<img
+class="commissionPreview"
+src="default.png">
+
+<input
+type="file"
+class="commissionImage"
+accept="image/*"
+hidden>
+
+</div>
+
+<div class="commissionInfo">
+
+<input
+class="artistName"
+placeholder="작가님">
+
+<input
+class="commissionLink"
+placeholder="링크 (X, 포스타입 등)">
+
+<textarea
+class="commissionMemo"
+placeholder="메모">
+
+</textarea>
+
+<div class="commissionGallery">
+
+<h4>
+
+추가 이미지
+
+</h4>
+
+<input
+type="file"
+class="commissionGalleryInput"
+accept="image/*"
+multiple>
+
+<div class="commissionGalleryPreview">
+
+</div>
+
+</div>
+
+<button class="deleteCommission">
+
+삭제
+
+</button>
+
+</div>
+
+</div>
+
+</template>
+
+<!-- ===========================
+갤러리
+=========================== -->
+
+<section class="gallerySection">
+
+<div class="sectionHeader">
+
+<h2>
+
+🖼 전체 갤러리
+
+</h2>
+
+</div>
+
+<div id="galleryGrid">
+
+<!-- JS에서 자동 생성 -->
+
+</div>
+
+</section>
+
+<!-- ===========================
+자동 저장 상태
 =========================== -->
 
 <div class="saveStatus">
 
 <span id="saveState">
 
-🟢 자동 저장 활성화
+☁️ 자동 저장 활성화
 
 </span>
 
@@ -374,9 +640,8 @@ Toast
 저장되었습니다.
 
 </div>
-
 <!-- ===========================
-Setting Modal
+설정 모달
 =========================== -->
 
 <div id="settingModal" class="modal">
@@ -397,13 +662,13 @@ Setting Modal
 
 <button id="exportJSON">
 
-JSON 백업
+📦 JSON 백업
 
 </button>
 
 <button id="importJSON">
 
-JSON 복원
+📂 JSON 불러오기
 
 </button>
 
@@ -413,9 +678,11 @@ id="jsonFile"
 accept=".json"
 hidden>
 
-<button id="deleteDream">
+<hr>
 
-드림 삭제
+<button id="deleteArchive">
+
+🗑 아카이브 삭제
 
 </button>
 
@@ -429,8 +696,28 @@ hidden>
 
 </div>
 
+
+
 <!-- ===========================
-Floating
+이미지 확대
+=========================== -->
+
+<div id="imageViewer" class="viewer">
+
+<span id="closeViewer">
+
+✕
+
+</span>
+
+<img id="viewerImage">
+
+</div>
+
+
+
+<!-- ===========================
+Floating Decoration
 =========================== -->
 
 <div class="floating one">
@@ -451,471 +738,29 @@ Floating
 
 </div>
 
-<!-- ===========================
-Script
-=========================== -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="supabase.js"></script>
-
-<script src="dream.js"></script>
-
-</body>
-
-</html>
-<!-- ===========================
-AU
-=========================== -->
-
-<div class="tabContent" id="au">
-
-<div class="sectionHeader">
-
-<h2>AU</h2>
-
-<button id="addAU">
-
-＋ AU 추가
-
-</button>
-
-</div>
-
-<div id="auList">
-
-<!-- JS가 생성 -->
-
-</div>
-
-</div>
-
 
 
 <!-- ===========================
-커미션
+Loading
 =========================== -->
 
-<div class="tabContent" id="commission">
+<div id="loadingScreen">
 
-<div class="sectionHeader">
+<div class="loadingBox">
 
-<h2>커미션</h2>
-
-<button id="addCommission">
-
-＋ 커미션 추가
-
-</button>
+<div class="loader">
 
 </div>
-
-<div id="commissionList">
-
-</div>
-
-</div>
-
-
-
-<!-- ===========================
-로그
-=========================== -->
-
-<div class="tabContent" id="log">
-
-<div class="sectionHeader">
-
-<h2>로그</h2>
-
-<button id="addLog">
-
-＋ 로그 작성
-
-</button>
-
-</div>
-
-<div id="logList">
-
-</div>
-
-</div>
-
-
-
-<!-- ===========================
-AU Template
-=========================== -->
-
-<template id="auTemplate">
-
-<div class="card">
-
-<input
-class="auTitle"
-placeholder="AU 이름">
-
-<textarea
-class="auContent"
-placeholder="설명">
-
-</textarea>
-
-<input
-type="file"
-class="auImage"
-accept="image/*">
-
-</div>
-
-</template>
-
-
-
-<!-- ===========================
-Commission Template
-=========================== -->
-
-<template id="commissionTemplate">
-
-<div class="card">
-
-<input
-
-class="artist"
-
-placeholder="작가님">
-
-<input
-
-class="link"
-
-placeholder="링크">
-
-<textarea
-
-class="memo"
-
-placeholder="메모">
-
-</textarea>
-
-<input
-type="file"
-
-class="commissionImage"
-
-accept="image/*">
-
-</div>
-
-</template>
-
-
-
-<!-- ===========================
-Log Template
-=========================== -->
-
-<template id="logTemplate">
-
-<div class="card">
-
-<input
-
-type="date"
-
-class="logDate">
-
-<input
-
-class="logTitle"
-
-placeholder="제목">
-
-<textarea
-
-class="logContent"
-
-placeholder="내용">
-
-</textarea>
-
-<input
-type="file"
-
-class="logImage"
-
-accept="image/*">
-
-</div>
-
-</template>
-<!-- ===========================
-관계
-=========================== -->
-
-<div class="tabContent" id="relation">
-
-<div class="sectionHeader">
-
-<h2>
-
-관계
-
-</h2>
-
-<button id="addRelation">
-
-＋ 관계 추가
-
-</button>
-
-</div>
-
-<div id="relationList">
-
-</div>
-
-</div>
-
-
-
-<!-- ===========================
-타임라인
-=========================== -->
-
-<div class="timelineSection">
-
-<div class="sectionHeader">
-
-<h2>
-
-드림 타임라인
-
-</h2>
-
-<button id="addTimeline">
-
-＋ 일정 추가
-
-</button>
-
-</div>
-
-<div id="timelineList">
-
-</div>
-
-</div>
-
-
-
-<!-- ===========================
-관계 Template
-=========================== -->
-
-<template id="relationTemplate">
-
-<div class="card relationCard">
-
-<input
-
-class="relationName"
-
-placeholder="캐릭터 이름">
-
-<input
-
-class="relationType"
-
-placeholder="관계 (연인, 친구 등)">
-
-<textarea
-
-class="relationMemo"
-
-placeholder="관계 설명">
-
-</textarea>
-
-<input
-type="file"
-
-class="relationImage"
-
-accept="image/*">
-
-<button class="deleteRelation">
-
-삭제
-
-</button>
-
-</div>
-
-</template>
-
-
-
-<!-- ===========================
-Timeline Template
-=========================== -->
-
-<template id="timelineTemplate">
-
-<div class="timelineCard">
-
-<div class="timelineLeft">
-
-<div class="timelineDot"></div>
-
-</div>
-
-<div class="timelineRight">
-
-<input
-
-type="date"
-
-class="timelineDate">
-
-<input
-
-class="timelineTitle"
-
-placeholder="제목">
-
-<textarea
-
-class="timelineContent"
-
-placeholder="내용">
-
-</textarea>
-
-<input
-type="file"
-
-class="timelineImage"
-
-accept="image/*">
-
-<button class="deleteTimeline">
-
-삭제
-
-</button>
-
-</div>
-
-</div>
-
-</template>
-
-
-
-<!-- ===========================
-자동 저장 상태
-=========================== -->
-
-<div class="autoSave">
-
-<span class="saveIcon">
-
-☁️
-
-</span>
-
-<span id="saveText">
-
-자동 저장 활성화
-
-</span>
-
-</div>
-
-
-
-<!-- ===========================
-삭제 확인
-=========================== -->
-
-<div id="deleteModal" class="modal">
-
-<div class="modalBox">
-
-<h2>
-
-드림 삭제
-
-</h2>
 
 <p>
 
-삭제하면 복구할 수 없습니다.
+Saving...
 
 </p>
 
-<div class="modalButtons">
-
-<button id="cancelDelete">
-
-취소
-
-</button>
-
-<button id="confirmDelete">
-
-삭제
-
-</button>
-
 </div>
 
 </div>
-
-</div>
-<!-- ===========================
-통계
-=========================== -->
-
-<section class="dreamStats">
-
-<div class="statCard">
-
-<h3>D-Day</h3>
-
-<p id="statDay">D+0</p>
-
-</div>
-
-<div class="statCard">
-
-<h3>AU</h3>
-
-<p id="statAU">0</p>
-
-</div>
-
-<div class="statCard">
-
-<h3>커미션</h3>
-
-<p id="statCommission">0</p>
-
-</div>
-
-<div class="statCard">
-
-<h3>로그</h3>
-
-<p id="statLog">0</p>
-
-</div>
-
-</section>
 
 
 
@@ -939,105 +784,13 @@ accept="image/*">
 
 </div>
 
-
-
-<!-- ===========================
-사진 확대
-=========================== -->
-
-<div id="imageViewer" class="viewer">
-
-<span id="closeViewer">
-
-✕
-
-</span>
-
-<img id="viewerImage">
-
-</div>
+</main>
 
 
 
 <!-- ===========================
-하단 메뉴(모바일)
+Script
 =========================== -->
-
-<nav class="mobileMenu">
-
-<button data-tab="appearance">
-
-👤
-
-</button>
-
-<button data-tab="story">
-
-📖
-
-</button>
-
-<button data-tab="relation">
-
-💞
-
-</button>
-
-<button data-tab="au">
-
-🌎
-
-</button>
-
-<button data-tab="commission">
-
-🎨
-
-</button>
-
-<button data-tab="log">
-
-📝
-
-</button>
-
-</nav>
-
-
-
-<!-- ===========================
-Toast
-=========================== -->
-
-<div id="toast">
-
-저장되었습니다.
-
-</div>
-
-
-
-<!-- ===========================
-Loading
-=========================== -->
-
-<div id="loadingScreen">
-
-<div class="loadingBox">
-
-<div class="loader"></div>
-
-<p>
-
-Saving...
-
-</p>
-
-</div>
-
-</div>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
