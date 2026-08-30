@@ -1,19 +1,12 @@
-alert(typeof supabase);
-alert(typeof supabase.auth);
-// =========================
-// Dream Archive Signup
-// =========================
+const signupForm = document.getElementById("signupForm");
 
-// 이미 로그인되어 있으면 메인으로 이동
 (async () => {
-    const { data } = await supabase.auth.getSession();
+    const { data } = await db.auth.getSession();
 
     if (data.session) {
         location.href = "index.html";
     }
 })();
-
-const signupForm = document.getElementById("signupForm");
 
 signupForm.addEventListener("submit", async (e) => {
 
@@ -23,8 +16,6 @@ signupForm.addEventListener("submit", async (e) => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const passwordCheck = document.getElementById("passwordCheck").value;
-
-    const button = signupForm.querySelector("button");
 
     if (!nickname) {
         alert("닉네임을 입력해주세요.");
@@ -41,57 +32,23 @@ signupForm.addEventListener("submit", async (e) => {
         return;
     }
 
-    button.disabled = true;
-    button.textContent = "가입 중...";
-
-    try {
-        alert("회원가입 시작");
-        
-        alert("signUp 실행");
-
-        const { error } = await supabase.auth.signUp({
-
-            email,
-            password,
-
-            options: {
-
-                data: {
-
-                    nickname: nickname
-
-                }
-
+    const { error } = await db.auth.signUp({
+        email,
+        password,
+        options: {
+            data: {
+                nickname: nickname
             }
-
-        });
-alert("signUp 완료");
-        if (error) {
-
-            alert(error.message);
-
-            button.disabled = false;
-            button.textContent = "회원가입";
-
-            return;
-
         }
+    });
 
-        alert(
-`회원가입이 완료되었습니다!
-
-이메일 인증 후 로그인해주세요.`
-        );
-
-        location.href = "login.html";
-
-    } catch (err) {
-
-        alert(err.message);
-
-        button.disabled = false;
-        button.textContent = "회원가입";
-
+    if (error) {
+        alert(error.message);
+        return;
     }
+
+    alert("회원가입이 완료되었습니다.");
+
+    location.href = "login.html";
 
 });
