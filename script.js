@@ -1,4 +1,4 @@
-alert("script 시작");
+
 // =========================
 // Dream Archive
 // script.js (1)
@@ -37,6 +37,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 async function checkLogin() {
 
     try {
+        alert("checkLogin 들어옴");
 
         const { data, error } = await supabase.auth.getUser();
 
