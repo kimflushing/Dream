@@ -109,30 +109,27 @@ async function logout() {
 
 async function loadDreams() {
 
+    alert("loadDreams 시작");
+
     const { data, error } = await supabase
-
         .from("dreams")
-
         .select("*")
-
         .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
-        .order("created_at", {
-            ascending: false
-        });
+    alert("조회 완료");
 
     if (error) {
-
+        alert("에러 : " + error.message);
         console.error(error);
-
         return;
-
     }
 
     dreams = data || [];
 
     renderDreams(dreams);
 
+    alert("render 완료");
 }
 
 // -------------------------
