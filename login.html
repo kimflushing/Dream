@@ -2,63 +2,86 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dream Archive | Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="login.css">
+<title>Dream Archive | 로그인</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="login.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
 
-<div class="background"></div>
+<div class="bg">
 
-<div class="loginCard">
-
-    <h1>Dream Archive</h1>
-
-    <p class="subtitle">
-        모든 추억을 기록하는 작은 공간
-    </p>
-
-    <form id="loginForm">
-
-        <input
-            type="email"
-            id="email"
-            placeholder="이메일"
-            required>
-
-        <input
-            type="password"
-            id="password"
-            placeholder="비밀번호"
-            required>
-
-        <button type="submit">
-            로그인
-        </button>
-
-    </form>
-
-    <div class="bottom">
-        <p>계정이 없으신가요?</p>
-        <a href="signup.html">회원가입</a>
-    </div>
+<div class="circle c1"></div>
+<div class="circle c2"></div>
+<div class="circle c3"></div>
 
 </div>
 
-<!-- Supabase -->
+<div class="loginCard">
+
+<h1>Dream Archive</h1>
+
+<p class="subtitle">
+
+모든 추억을 기록하는 공간
+
+</p>
+
+<form id="loginForm">
+
+<input
+type="email"
+id="email"
+placeholder="이메일"
+required>
+
+<input
+type="password"
+id="password"
+placeholder="비밀번호"
+required>
+
+<button type="submit">
+
+로그인
+
+</button>
+
+</form>
+
+<div class="bottom">
+
+<span>
+
+계정이 없나요?
+
+</span>
+
+<a href="signup.html">
+
+회원가입
+
+</a>
+
+</div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- 내 파일 -->
 <script src="supabase.js"></script>
+
 <script src="login.js"></script>
 
 </body>
+
 </html>
