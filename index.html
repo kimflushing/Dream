@@ -19,35 +19,33 @@
 
 <body>
 
-<!-- Background -->
+<!-- 배경 -->
 
-<div class="bg">
-    <div class="blur b1"></div>
-    <div class="blur b2"></div>
-    <div class="blur b3"></div>
+<div class="background">
 
-    <div class="stars"></div>
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
 </div>
 
-<!-- Header -->
+<!-- 헤더 -->
 
 <header>
 
-<div class="logo">
-
 <h1>Dream Archive</h1>
 
-<p>
-모든 추억을 기록하는 작은 공간
-</p>
+<div class="headerButtons">
 
-</div>
+<button id="createDream">
 
-<div class="headerRight">
+＋ 드림 추가
 
-<button id="settingBtn">
+</button>
 
-⚙️
+<button id="logoutBtn">
+
+로그아웃
 
 </button>
 
@@ -55,60 +53,70 @@
 
 </header>
 
-<!-- Search -->
+<!-- 검색 -->
 
-<section class="searchSection">
+<section class="searchArea">
 
 <input
 type="text"
 id="searchInput"
-placeholder="🔍 드림 검색">
+placeholder="드림 검색...">
 
 </section>
 
-<!-- Top Buttons -->
+<!-- 카드 목록 -->
 
-<section class="topButtons">
+<main>
 
-<button id="createDream">
+<div id="dreamList" class="dreamGrid">
 
-＋ 새 드림 만들기
-
-</button>
-
-</section>
-
-<!-- Dream List -->
-
-<main id="dreamList">
-
-<div class="emptyBox">
-
-<div class="emptyIcon">
-
-☁️
-
-</div>
-
-<h2>
-
-아직 등록된 드림이 없습니다.
-
-</h2>
-
-<p>
-
-첫 번째 드림을 만들어보세요.
-
-</p>
+<!-- JS에서 자동 생성 -->
 
 </div>
 
 </main>
 
-<!-- ========================= -->
-<!-- 새 드림 만들기 -->
-<!-- ========================= -->
+<!-- 빈 화면 -->
+
+<template id="emptyTemplate">
+
+<div class="emptyBox">
+
+<h2>☁️</h2>
+
+<p>
+
+아직 등록된 드림이 없습니다.
+
+</p>
+
+</div>
+
+</template>
+
+<!-- 카드 -->
+
+<template id="dreamCardTemplate">
+
+<div class="dreamCard">
+
+<img class="cardImage" src="default.png">
+
+<div class="cardBody">
+
+<h2 class="cardTitle"></h2>
+
+<p class="cardDay"></p>
+
+<p class="cardIntro"></p>
+
+</div>
+
+</div>
+
+</template>
+
+<!-- 생성 모달 -->
 
 <div id="createModal" class="modal">
 
@@ -116,48 +124,40 @@ placeholder="🔍 드림 검색">
 
 <h2>
 
-새 드림 만들기
+새 드림
 
 </h2>
 
-<div class="imageArea">
-
-<label for="dreamImage">
-
-<div id="previewImage">
-
-사진 추가
-
-</div>
-
-</label>
-
 <input
-type="file"
-id="dreamImage"
-accept="image/*"
-hidden>
-
-</div>
-
-<input
-type="text"
 id="dreamName"
 placeholder="드림 이름">
+
+<textarea
+id="dreamIntro"
+placeholder="소개">
+
+</textarea>
 
 <input
 type="date"
 id="dreamDate">
 
-<textarea
+<input
+type="file"
+id="dreamImage"
+accept="image/*">
 
-id="dreamIntro"
+<div id="previewImage">
 
-placeholder="한 줄 소개">
-
-</textarea>
+</div>
 
 <div class="modalButtons">
+
+<button id="saveDream">
+
+저장
+
+</button>
 
 <button id="closeModal">
 
@@ -165,24 +165,33 @@ placeholder="한 줄 소개">
 
 </button>
 
-<button id="saveDream">
-
-만들기
-
-</button>
-
 </div>
 
 </div>
 
 </div>
-<!-- ========================= -->
-<!-- 설정 모달 -->
-<!-- ========================= -->
+
+<!-- 로딩 -->
+
+<div id="loadingScreen">
+
+<div class="loader"></div>
+
+</div>
+
+<!-- Toast -->
+
+<div id="toast">
+
+완료되었습니다.
+
+</div>
+
+<!-- 설정 -->
 
 <div id="settingModal" class="modal">
 
-<div class="modalBox settingBox">
+<div class="modalBox">
 
 <h2>
 
@@ -190,21 +199,15 @@ placeholder="한 줄 소개">
 
 </h2>
 
-<button id="profileBtn">
-
-👤 프로필
-
-</button>
-
 <button id="backupBtn">
 
-💾 JSON 백업
+JSON 백업
 
 </button>
 
 <button id="restoreBtn">
 
-📂 JSON 복원
+JSON 복원
 
 </button>
 
@@ -214,11 +217,7 @@ id="restoreFile"
 accept=".json"
 hidden>
 
-<button id="logoutBtn">
-
-🚪 로그아웃
-
-</button>
+<hr>
 
 <button id="closeSetting">
 
@@ -230,107 +229,13 @@ hidden>
 
 </div>
 
-<!-- ========================= -->
-<!-- 로딩 -->
-<!-- ========================= -->
+<button id="settingBtn" class="settingButton">
 
-<div id="loadingScreen">
+⚙️
 
-<div class="loadingCard">
+</button>
 
-<div class="loadingCircle"></div>
-
-<h2>
-
-Dream Archive
-
-</h2>
-
-<p>
-
-Loading...
-
-</p>
-
-</div>
-
-</div>
-
-<!-- ========================= -->
-<!-- Toast -->
-<!-- ========================= -->
-
-<div id="toast">
-
-저장되었습니다.
-
-</div>
-
-<!-- ========================= -->
-<!-- Template -->
-<!-- ========================= -->
-
-<template id="dreamCardTemplate">
-
-<div class="dreamCard">
-
-<div class="dreamImage">
-
-<img src="" class="cardImage">
-
-</div>
-
-<div class="dreamInfo">
-
-<h2 class="cardTitle">
-
-Dream Name
-
-</h2>
-
-<p class="cardDay">
-
-D+000
-
-</p>
-
-<p class="cardIntro">
-
-소개
-
-</p>
-
-</div>
-
-</div>
-
-</template>
-
-<!-- ========================= -->
-<!-- Floating -->
-<!-- ========================= -->
-
-<div class="floating">
-
-🌸
-
-</div>
-
-<div class="floating delay1">
-
-☁️
-
-</div>
-
-<div class="floating delay2">
-
-✨
-
-</div>
-
-<!-- ========================= -->
-<!-- Script -->
-<!-- ========================= -->
+<!-- Supabase -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
