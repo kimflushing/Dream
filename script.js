@@ -378,29 +378,36 @@ async function saveDream(){
 
     }
 
-    showLoading();
+  showLoading();
+
+try {
 
     const imageUrl = await uploadImage(selectedImage);
 
     const { error } = await supabase
-
         .from("dreams")
-
         .insert({
-
-            user_id:user.id,
-
-            name:name,
-
-            intro:intro,
-
-            image:imageUrl,
-
-            start_date:startDate
-
+            user_id: user.id,
+            name: name,
+            intro: intro,
+            image: imageUrl,
+            start_date: startDate
         });
 
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+} catch (e) {
+
+    alert("오류 : " + e.message);
+
+} finally {
+
     hideLoading();
+
+}
 
     if(error){
 
