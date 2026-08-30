@@ -16,24 +16,14 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     try {
 
-        alert("1");
 
         await checkLogin();
 
-        alert("2");
-
         bindEvents();
-
-        alert("3");
 
         await loadDreams();
 
-        alert("4");
-
     } catch (e) {
-
-        alert("오류 : " + e.message);
-        console.error(e);
 
     }
 
@@ -46,7 +36,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 async function checkLogin() {
 
     try {
-        alert("checkLogin 들어옴");
 
         const { data, error } = await supabase.auth.getUser();
 
@@ -62,8 +51,6 @@ async function checkLogin() {
         }
 
         user = data.user;
-
-        alert("로그인 확인 완료");
 
     } catch (e) {
 
@@ -85,8 +72,6 @@ async function checkLogin() {
 
 async function logout() {
 
-    alert("로그아웃 함수 실행");
-
     const ok = confirm("로그아웃 하시겠습니까?");
 
     if (!ok) return;
@@ -102,8 +87,6 @@ async function logout() {
 // -------------------------
 
 async function loadDreams() {
-
-    alert("loadDreams 시작");
     alert(typeof supabase);
 alert(typeof supabase.from);
 console.log(supabase);
@@ -114,7 +97,6 @@ console.log(supabase);
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-    alert("조회 완료");
 
     if (error) {
         alert("에러 : " + error.message);
@@ -126,7 +108,6 @@ console.log(supabase);
 
     renderDreams(dreams);
 
-    alert("render 완료");
 }
 
 // -------------------------
@@ -250,8 +231,6 @@ function getDDay(date) {
 // -------------------------
 
 function openModal() {
-
-    alert("모달 열기");
 
     document.getElementById("createModal").style.display = "flex";
 
@@ -813,4 +792,4 @@ e.target.src="default.png";
 // -------------------------
 
 console.log("Dream Archive Loaded");
-alert("script 끝");
+
