@@ -77,22 +77,7 @@ async function checkLogin() {
 // 이벤트
 // -------------------------
 
-function bindEvents() {
 
-    alert("bindEvents 실행");
-
-    console.log(document.getElementById("logoutBtn"));
-    console.log(document.getElementById("createDream"));
-
-    document.getElementById("logoutBtn").onclick = logout;
-
-    document.getElementById("searchInput").oninput = searchDream;
-
-    document.getElementById("createDream").onclick = openModal;
-
-    document.getElementById("closeModal").onclick = closeModal;
-
-}
 
 // -------------------------
 // 로그아웃
