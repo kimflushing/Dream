@@ -363,6 +363,10 @@ async function uploadImage(file){
 // -------------------------
 
 async function saveDream(){
+    if (!user) {
+    alert("로그인 정보를 불러오지 못했습니다.");
+    return;
+}
 
     const name = document.getElementById("dreamName").value.trim();
 
@@ -393,11 +397,6 @@ try {
             image: imageUrl,
             start_date: startDate
         });
-
-    if (error) {
-        alert(error.message);
-        return;
-    }
 
 } catch (e) {
 
