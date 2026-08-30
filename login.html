@@ -1,72 +1,30 @@
-<!DOCTYPE html>
-<html lang="ko">
+alert("login.js 로드됨");
 
-<head>
+const loginForm = document.getElementById("loginForm");
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+alert(loginForm);
 
-<title>Dream Archive | Login</title>
+if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-<link rel="stylesheet" href="css/login.css">
+        alert("로그인 버튼 눌림");
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
-</head>
+        if (error) {
+            alert(error.message);
+            return;
+        }
 
-<body>
+        alert("로그인 성공");
 
-<div class="background"></div>
-
-<div class="loginCard">
-
-<h1>Dream Archive</h1>
-
-<p class="subtitle">
-모든 추억을 기록하는 작은 공간
-</p>
-
-<form id="loginForm">
-
-<input
-type="email"
-id="email"
-placeholder="이메일"
-required>
-
-<input
-type="password"
-id="password"
-placeholder="비밀번호"
-required>
-
-<button type="submit">
-로그인
-</button>
-
-</form>
-
-<div class="bottom">
-
-<p>
-계정이 없으신가요?
-</p>
-
-<a href="signup.html">
-회원가입
-</a>
-
-</div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-<script src="login.js"></script>
-
-</body>
-
-</html>
+        location.href = "index.html";
+    });
+}
