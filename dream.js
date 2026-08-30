@@ -1,5 +1,11 @@
 // ==========================================
-// Dream Archive v2
+// Dream Archive v3
+// ==========================================
+
+"use strict";
+
+// ==========================================
+// Shortcut
 // ==========================================
 
 const $ = (e) => document.querySelector(e);
@@ -9,7 +15,13 @@ const $$ = (e) => document.querySelectorAll(e);
 // Supabase
 // ==========================================
 
-const db = window.supabaseClient || window.supabase || null;
+const db = window.supabaseClient || null;
+
+// ==========================================
+// LocalStorage
+// ==========================================
+
+const STORAGE_KEY = "DreamArchive_v3";
 
 // ==========================================
 // Elements
@@ -22,32 +34,44 @@ const preview = $("#previewImage");
 const imageInput = $("#mainImage");
 
 const saveBtn = $("#saveBtn");
+const backBtn = $("#backBtn");
+
 const toast = $("#toast");
 
 const viewer = $("#imageViewer");
 const viewerImage = $("#viewerImage");
+const closeViewer = $("#closeViewer");
 
 const loading = $("#loadingScreen");
 
 const settingModal = $("#settingModal");
+const settingBtn = $("#settingBtn");
+const closeSetting = $("#closeSetting");
+
+const startDate = $("#startDate");
+const dday = $("#dday");
 
 // ==========================================
 // Toast
 // ==========================================
 
+let toastTimer = null;
+
 function toastMessage(text){
 
-toast.textContent=text;
+    if(!toast) return;
 
-toast.classList.add("show");
+    toast.textContent = text;
 
-clearTimeout(window.toastTimer);
+    toast.classList.add("show");
 
-window.toastTimer=setTimeout(()=>{
+    clearTimeout(toastTimer);
 
-toast.classList.remove("show");
+    toastTimer = setTimeout(()=>{
 
-},1800);
+        toast.classList.remove("show");
+
+    },1800);
 
 }
 
@@ -57,13 +81,21 @@ toast.classList.remove("show");
 
 function loadingOn(){
 
-loading.classList.add("show");
+    if(loading){
+
+        loading.classList.add("show");
+
+    }
 
 }
 
 function loadingOff(){
 
-loading.classList.remove("show");
+    if(loading){
+
+        loading.classList.remove("show");
+
+    }
 
 }
 
@@ -73,17 +105,23 @@ loading.classList.remove("show");
 
 tabs.forEach(tab=>{
 
-tab.onclick=()=>{
+    tab.addEventListener("click",()=>{
 
-tabs.forEach(t=>t.classList.remove("active"));
+        tabs.forEach(t=>t.classList.remove("active"));
 
-pages.forEach(p=>p.classList.remove("active"));
+        pages.forEach(p=>p.classList.remove("active"));
 
-tab.classList.add("active");
+        tab.classList.add("active");
 
-$("#"+tab.dataset.tab).classList.add("active");
+        const page=$("#"+tab.dataset.tab);
 
-};
+        if(page){
+
+            page.classList.add("active");
+
+        }
+
+    });
 
 });
 
@@ -91,179 +129,202 @@ $("#"+tab.dataset.tab).classList.add("active");
 // D-Day
 // ==========================================
 
-const startDate=$("#startDate");
-const dday=$("#dday");
-
 function updateDday(){
 
-if(!startDate.value){
+    if(!startDate || !dday) return;
 
-dday.textContent="D+0";
+    if(!startDate.value){
 
-return;
+        dday.textContent="D+0";
+
+        return;
+
+    }
+
+    const start=new Date(startDate.value);
+
+    const today=new Date();
+
+    start.setHours(0,0,0,0);
+
+    today.setHours(0,0,0,0);
+
+    const diff=Math.floor(
+
+        (today-start)/(1000*60*60*24)
+
+    );
+
+    dday.textContent=
+
+        diff>=0 ? `D+${diff}` : `D${diff}`;
 
 }
 
-const s=new Date(startDate.value);
+if(startDate){
 
-const t=new Date();
-
-s.setHours(0,0,0,0);
-
-t.setHours(0,0,0,0);
-
-const diff=Math.floor((t-s)/(1000*60*60*24));
-
-if(diff>=0){
-
-dday.textContent=`D+${diff}`;
-
-}else{
-
-dday.textContent=`D${diff}`;
+    startDate.addEventListener("change",updateDday);
 
 }
-
-}
-
-startDate.onchange=updateDday;
 
 // ==========================================
 // Cover Image
 // ==========================================
 
-imageInput.onchange=()=>{
+if(imageInput){
 
-const file=imageInput.files[0];
+imageInput.addEventListener("change",()=>{
 
-if(!file) return;
+    const file=imageInput.files[0];
 
-const reader=new FileReader();
+    if(!file) return;
 
-reader.onload=e=>{
+    const reader=new FileReader();
 
-preview.src=e.target.result;
+    reader.onload=e=>{
 
-autoSave();
+        preview.src=e.target.result;
 
-};
+        autoSave();
 
-reader.readAsDataURL(file);
+    };
 
-};
+    reader.readAsDataURL(file);
+
+});
+
+}
 
 // ==========================================
 // Viewer
 // ==========================================
 
-preview.onclick=()=>{
+if(preview){
 
-viewer.classList.add("show");
+preview.addEventListener("click",()=>{
 
-viewerImage.src=preview.src;
+    viewer.classList.add("show");
+
+    viewerImage.src=preview.src;
+
+});
+
+}
+
+if(closeViewer){
+
+closeViewer.onclick=()=>{
+
+    viewer.classList.remove("show");
 
 };
 
-$("#closeViewer").onclick=()=>{
+}
 
-viewer.classList.remove("show");
-
-};
+if(viewer){
 
 viewer.onclick=e=>{
 
-if(e.target===viewer){
+    if(e.target===viewer){
 
-viewer.classList.remove("show");
+        viewer.classList.remove("show");
+
+    }
+
+};
 
 }
 
-};
-
 // ==========================================
-// Home
+// Header Buttons
 // ==========================================
 
-$("#backBtn").onclick=()=>{
+if(backBtn){
 
-location.href="index.html";
+backBtn.onclick=()=>{
 
-};
-
-// ==========================================
-// Setting
-// ==========================================
-
-$("#settingBtn").onclick=()=>{
-
-settingModal.classList.add("show");
+    location.href="index.html";
 
 };
 
-$("#closeSetting").onclick=()=>{
+}
 
-settingModal.classList.remove("show");
+if(settingBtn){
+
+settingBtn.onclick=()=>{
+
+    settingModal.classList.add("show");
 
 };
+
+}
+
+if(closeSetting){
+
+closeSetting.onclick=()=>{
+
+    settingModal.classList.remove("show");
+
+};
+
+}
+
+if(settingModal){
 
 settingModal.onclick=e=>{
 
-if(e.target===settingModal){
+    if(e.target===settingModal){
 
-settingModal.classList.remove("show");
+        settingModal.classList.remove("show");
 
-}
+    }
 
 };
-// ==========================================
-// Storage
-// ==========================================
 
-const STORAGE_KEY = "DreamArchive_v2";
-
+}
 // ==========================================
 // Collect Data
 // ==========================================
 
 function collectData(){
 
-return{
+    return{
 
-archiveType:$("#archiveType").value,
+        archiveType:$("#archiveType")?.value||"",
 
-dreamName:$("#dreamName").value,
+        dreamName:$("#dreamName")?.value||"",
 
-startDate:$("#startDate").value,
+        startDate:$("#startDate")?.value||"",
 
-intro:$("#intro").value,
+        intro:$("#intro")?.value||"",
 
-characterName:$("#characterName").value,
+        characterName:$("#characterName")?.value||"",
 
-height:$("#height").value,
+        height:$("#height")?.value||"",
 
-birthday:$("#birthday").value,
+        birthday:$("#birthday")?.value||"",
 
-age:$("#age").value,
+        age:$("#age")?.value||"",
 
-mbti:$("#mbti").value,
+        mbti:$("#mbti")?.value||"",
 
-job:$("#job").value,
+        job:$("#job")?.value||"",
 
-appearanceText:$("#appearanceText").value,
+        appearanceText:$("#appearanceText")?.value||"",
 
-worldName:$("#worldName").value,
+        worldName:$("#worldName")?.value||"",
 
-group:$("#group").value,
+        group:$("#group")?.value||"",
 
-ability:$("#ability").value,
+        ability:$("#ability")?.value||"",
 
-settingText:$("#settingText").value,
+        settingText:$("#settingText")?.value||"",
 
-storyText:$("#storyText").value,
+        storyText:$("#storyText")?.value||"",
 
-cover:preview.src
+        cover:preview ? preview.src : ""
 
-};
+    };
 
 }
 
@@ -273,27 +334,27 @@ cover:preview.src
 
 function applyData(data){
 
-if(!data) return;
+    if(!data) return;
 
-Object.keys(data).forEach(key=>{
+    Object.keys(data).forEach(key=>{
 
-const el=document.getElementById(key);
+        const el=document.getElementById(key);
 
-if(el){
+        if(el){
 
-el.value=data[key];
+            el.value=data[key];
 
-}
+        }
 
-});
+    });
 
-if(data.cover){
+    if(data.cover && preview){
 
-preview.src=data.cover;
+        preview.src=data.cover;
 
-}
+    }
 
-updateDday();
+    updateDday();
 
 }
 
@@ -303,19 +364,27 @@ updateDday();
 
 function saveLocal(){
 
-const data=collectData();
+    localStorage.setItem(
 
-localStorage.setItem(
+        STORAGE_KEY,
 
-STORAGE_KEY,
+        JSON.stringify(
 
-JSON.stringify(data)
+            collectData()
 
-);
+        )
 
-$("#lastSaveTime").textContent=
+    );
 
-new Date().toLocaleString("ko-KR");
+    const time=$("#lastSaveTime");
+
+    if(time){
+
+        time.textContent=
+
+        new Date().toLocaleString("ko-KR");
+
+    }
 
 }
 
@@ -325,13 +394,111 @@ new Date().toLocaleString("ko-KR");
 
 function loadLocal(){
 
-const raw=
+    const raw=
 
-localStorage.getItem(STORAGE_KEY);
+    localStorage.getItem(STORAGE_KEY);
 
-if(!raw) return;
+    if(!raw) return;
 
-applyData(JSON.parse(raw));
+    try{
+
+        applyData(
+
+            JSON.parse(raw)
+
+        );
+
+    }catch(e){
+
+        console.error(e);
+
+    }
+
+}
+
+// ==========================================
+// Cloud Save
+// ==========================================
+
+async function saveCloud(){
+
+    if(!db) return;
+
+    try{
+
+        await db
+
+        .from("archives")
+
+        .upsert([{
+
+            id:1,
+
+            data:collectData(),
+
+            updated_at:
+
+            new Date()
+
+            .toISOString()
+
+        }]);
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+// ==========================================
+// Cloud Load
+// ==========================================
+
+async function loadCloud(){
+
+    if(!db) return;
+
+    loadingOn();
+
+    try{
+
+        const{
+
+            data,
+
+            error
+
+        }=
+
+        await db
+
+        .from("archives")
+
+        .select("*")
+
+        .eq("id",1)
+
+        .single();
+
+        if(!error && data){
+
+            applyData(data.data);
+
+        }
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+    loadingOff();
 
 }
 
@@ -341,23 +508,43 @@ applyData(JSON.parse(raw));
 
 function autoSave(){
 
-saveLocal();
+    saveLocal();
 
-saveCloud();
+    saveCloud();
 
-toastMessage("자동 저장");
+    toastMessage("자동 저장");
 
 }
 
+// ==========================================
+// Inputs
+// ==========================================
+
 document
 
-.querySelectorAll("input,textarea,select")
+.querySelectorAll(
+
+"input,textarea,select"
+
+)
 
 .forEach(el=>{
 
-el.addEventListener("input",autoSave);
+    el.addEventListener(
 
-el.addEventListener("change",autoSave);
+        "input",
+
+        autoSave
+
+    );
+
+    el.addEventListener(
+
+        "change",
+
+        autoSave
+
+    );
 
 });
 
@@ -365,85 +552,13 @@ el.addEventListener("change",autoSave);
 // Save Button
 // ==========================================
 
+if(saveBtn){
+
 saveBtn.onclick=()=>{
 
-autoSave();
+    autoSave();
 
 };
-
-// ==========================================
-// Supabase Save
-// ==========================================
-
-async function saveCloud(){
-
-if(!db) return;
-
-try{
-
-await db
-
-.from("archives")
-
-.upsert([{
-
-id:1,
-
-data:collectData(),
-
-updated_at:new Date().toISOString()
-
-}]);
-
-}catch(e){
-
-console.log(e);
-
-}
-
-}
-
-// ==========================================
-// Supabase Load
-// ==========================================
-
-async function loadCloud(){
-
-if(!db) return;
-
-loadingOn();
-
-try{
-
-const{
-
-data,
-
-error
-
-}=await db
-
-.from("archives")
-
-.select("*")
-
-.eq("id",1)
-
-.single();
-
-if(!error&&data){
-
-applyData(data.data);
-
-}
-
-}catch(e){
-
-console.log(e);
-
-}
-
-loadingOff();
 
 }
 // ==========================================
@@ -453,136 +568,219 @@ loadingOff();
 const relationList=$("#relationList");
 const relationTemplate=$("#relationTemplate");
 
+if($("#addRelation")){
+
 $("#addRelation").onclick=()=>{
 
-const node=relationTemplate.content.cloneNode(true);
+    const node=
 
-const card=node.querySelector(".relationCard");
+    relationTemplate.content.cloneNode(true);
 
-const preview=card.querySelector(".relationPreview");
+    const card=
 
-const photo=card.querySelector(".relationPhoto");
+    node.querySelector(".relationCard");
 
-preview.onclick=()=>photo.click();
+    const preview=
 
-photo.onchange=()=>{
+    card.querySelector(".relationPreview");
 
-const file=photo.files[0];
+    const photo=
 
-if(!file) return;
+    card.querySelector(".relationPhoto");
 
-const reader=new FileReader();
+    // ----------------------
+    // Image
+    // ----------------------
 
-reader.onload=e=>{
+    preview.onclick=()=>{
 
-preview.src=e.target.result;
+        photo.click();
 
-autoSave();
+    };
+
+    photo.onchange=()=>{
+
+        const file=photo.files[0];
+
+        if(!file) return;
+
+        const reader=new FileReader();
+
+        reader.onload=e=>{
+
+            preview.src=e.target.result;
+
+            autoSave();
+
+        };
+
+        reader.readAsDataURL(file);
+
+    };
+
+    // ----------------------
+    // Viewer
+    // ----------------------
+
+    preview.addEventListener("click",()=>{
+
+        viewer.classList.add("show");
+
+        viewerImage.src=preview.src;
+
+    });
+
+    // ----------------------
+    // Delete
+    // ----------------------
+
+    card.querySelector(".deleteRelation")
+
+    .onclick=()=>{
+
+        card.remove();
+
+        autoSave();
+
+    };
+
+    // ----------------------
+    // Auto Save
+    // ----------------------
+
+    card.querySelectorAll(
+
+    "input,textarea"
+
+    ).forEach(el=>{
+
+        el.oninput=autoSave;
+
+        el.onchange=autoSave;
+
+    });
+
+    relationList.appendChild(card);
+
+    autoSave();
 
 };
 
-reader.readAsDataURL(file);
-
-};
-
-preview.addEventListener("click",()=>{
-
-viewer.classList.add("show");
-
-viewerImage.src=preview.src;
-
-});
-
-card.querySelector(".deleteRelation").onclick=()=>{
-
-card.remove();
-
-autoSave();
-
-};
-
-card.querySelectorAll("input,textarea").forEach(el=>{
-
-el.oninput=autoSave;
-
-el.onchange=autoSave;
-
-});
-
-relationList.appendChild(card);
-
-autoSave();
-
-};
+}
 
 // ==========================================
 // Timeline
 // ==========================================
 
 const timelineList=$("#timelineList");
+
 const timelineTemplate=$("#timelineTemplate");
+
+if($("#addTimeline")){
 
 $("#addTimeline").onclick=()=>{
 
-const node=timelineTemplate.content.cloneNode(true);
+    const node=
 
-const card=node.querySelector(".timelineCard");
+    timelineTemplate.content.cloneNode(true);
 
-card.querySelector(".deleteTimeline").onclick=()=>{
+    const card=
 
-card.remove();
+    node.querySelector(".timelineCard");
 
-autoSave();
+    card.querySelector(
+
+    ".deleteTimeline"
+
+    ).onclick=()=>{
+
+        card.remove();
+
+        autoSave();
+
+    };
+
+    card.querySelectorAll(
+
+    "input,textarea"
+
+    ).forEach(el=>{
+
+        el.oninput=autoSave;
+
+        el.onchange=autoSave;
+
+    });
+
+    timelineList.appendChild(card);
+
+    autoSave();
 
 };
 
-card.querySelectorAll("input,textarea").forEach(el=>{
-
-el.oninput=autoSave;
-
-el.onchange=autoSave;
-
-});
-
-timelineList.appendChild(card);
-
-autoSave();
-
-};
+}
 
 // ==========================================
 // Observe
 // ==========================================
 
-new MutationObserver(()=>{
-
-saveLocal();
-
-}).observe(relationList,{
-
-childList:true
-
-});
+if(relationList){
 
 new MutationObserver(()=>{
 
-saveLocal();
+    saveLocal();
 
-}).observe(timelineList,{
+}).observe(
+
+relationList,
+
+{
 
 childList:true
 
-});
+}
+
+);
+
+}
+
+if(timelineList){
+
+new MutationObserver(()=>{
+
+    saveLocal();
+
+}).observe(
+
+timelineList,
+
+{
+
+childList:true
+
+}
+
+);
+
+}
 
 // ==========================================
-// Gallery Viewer
+// Relation Viewer
 // ==========================================
 
-document.addEventListener("click",e=>{
+document.addEventListener(
+
+"click",
+
+e=>{
 
 if(
 
-e.target.classList.contains("relationPreview")
+e.target.classList.contains(
+
+"relationPreview"
+
+)
 
 ){
 
@@ -592,7 +790,9 @@ viewerImage.src=e.target.src;
 
 }
 
-});
+}
+
+);
 // ==========================================
 // AU
 // ==========================================
@@ -600,368 +800,492 @@ viewerImage.src=e.target.src;
 const auList=$("#auList");
 const auTemplate=$("#auTemplate");
 
+if($("#addAU")){
+
 $("#addAU").onclick=()=>{
 
-const node=auTemplate.content.cloneNode(true);
+    const node=
+    auTemplate.content.cloneNode(true);
 
-const card=node.querySelector(".auCard");
+    const card=
+    node.querySelector(".auCard");
 
-const preview=card.querySelector(".auPreview");
+    const preview=
+    card.querySelector(".auPreview");
 
-const imageInput=card.querySelector(".auImage");
+    const image=
+    card.querySelector(".auImage");
 
-const galleryInput=card.querySelector(".auGallery");
+    const galleryInput=
+    card.querySelector(".auGallery");
 
-const gallery=card.querySelector(".galleryPreview");
+    const gallery=
+    card.querySelector(".galleryPreview");
 
-// --------------------------
-// Cover Image
-// --------------------------
+    // ----------------------
+    // Cover
+    // ----------------------
 
-preview.onclick=()=>imageInput.click();
+    preview.onclick=()=>{
 
-imageInput.onchange=()=>{
+        image.click();
 
-const file=imageInput.files[0];
+    };
 
-if(!file) return;
+    image.onchange=()=>{
 
-const reader=new FileReader();
+        const file=image.files[0];
 
-reader.onload=e=>{
+        if(!file) return;
 
-preview.src=e.target.result;
+        const reader=new FileReader();
 
-autoSave();
+        reader.onload=e=>{
+
+            preview.src=e.target.result;
+
+            autoSave();
+
+            rebuildGallery();
+
+        };
+
+        reader.readAsDataURL(file);
+
+    };
+
+    // ----------------------
+    // Gallery
+    // ----------------------
+
+    galleryInput.onchange=()=>{
+
+        [...galleryInput.files].forEach(file=>{
+
+            const reader=new FileReader();
+
+            reader.onload=e=>{
+
+                const img=document.createElement("img");
+
+                img.src=e.target.result;
+
+                img.onclick=()=>{
+
+                    viewer.classList.add("show");
+
+                    viewerImage.src=img.src;
+
+                };
+
+                gallery.appendChild(img);
+
+                rebuildGallery();
+
+            };
+
+            reader.readAsDataURL(file);
+
+        });
+
+        autoSave();
+
+    };
+
+    // ----------------------
+    // Auto Save
+    // ----------------------
+
+    card.querySelectorAll(
+
+    "input,textarea"
+
+    ).forEach(el=>{
+
+        el.oninput=autoSave;
+
+        el.onchange=autoSave;
+
+    });
+
+    // ----------------------
+    // Delete
+    // ----------------------
+
+    card.querySelector(
+
+    ".deleteAU"
+
+    ).onclick=()=>{
+
+        card.remove();
+
+        rebuildGallery();
+
+        updateAUCount();
+
+        autoSave();
+
+    };
+
+    // ----------------------
+    // Viewer
+    // ----------------------
+
+    preview.addEventListener("click",()=>{
+
+        viewer.classList.add("show");
+
+        viewerImage.src=preview.src;
+
+    });
+
+    auList.appendChild(card);
+
+    updateAUCount();
+
+    autoSave();
 
 };
-
-reader.readAsDataURL(file);
-
-};
-
-// --------------------------
-// Gallery
-// --------------------------
-
-galleryInput.onchange=()=>{
-
-gallery.innerHTML="";
-
-[...galleryInput.files].forEach(file=>{
-
-const reader=new FileReader();
-
-reader.onload=e=>{
-
-const img=document.createElement("img");
-
-img.src=e.target.result;
-
-img.onclick=()=>{
-
-viewer.classList.add("show");
-
-viewerImage.src=img.src;
-
-};
-
-gallery.appendChild(img);
-
-};
-
-reader.readAsDataURL(file);
-
-});
-
-autoSave();
-
-};
-
-// --------------------------
-// Delete
-// --------------------------
-
-card.querySelector(".deleteAU").onclick=()=>{
-
-card.remove();
-
-autoSave();
-
-};
-
-// --------------------------
-// Auto Save
-// --------------------------
-
-card.querySelectorAll("input,textarea").forEach(el=>{
-
-el.oninput=autoSave;
-
-el.onchange=autoSave;
-
-});
-
-// --------------------------
-// Preview Viewer
-// --------------------------
-
-preview.addEventListener("click",()=>{
-
-viewer.classList.add("show");
-
-viewerImage.src=preview.src;
-
-});
-
-auList.appendChild(card);
-
-autoSave();
-
-};
-
-// ==========================================
-// AU Observer
-// ==========================================
-
-new MutationObserver(()=>{
-
-saveLocal();
-
-}).observe(auList,{
-
-childList:true
-
-});
-
-// ==========================================
-// Gallery Viewer
-// ==========================================
-
-document.addEventListener("click",e=>{
-
-if(e.target.closest(".galleryPreview img")){
-
-viewer.classList.add("show");
-
-viewerImage.src=e.target.src;
 
 }
 
-});
-
 // ==========================================
-// Update Counter
+// AU Counter
 // ==========================================
 
 function updateAUCount(){
 
-const count=auList.querySelectorAll(".auCard").length;
+    const stat=$("#statAU");
 
-const stat=$("#statAU");
+    if(!stat) return;
 
-if(stat){
+    stat.textContent=
 
-stat.textContent=count;
+    auList
+
+    .querySelectorAll(".auCard")
+
+    .length;
 
 }
 
-}
+if(auList){
 
-new MutationObserver(updateAUCount).observe(auList,{
+new MutationObserver(()=>{
+
+    updateAUCount();
+
+}).observe(
+
+auList,
+
+{
 
 childList:true
 
-});
+}
+
+);
+
+}
 
 updateAUCount();
 // ==========================================
 // Commission
 // ==========================================
 
-const commissionList = $("#commissionList");
-const commissionTemplate = $("#commissionTemplate");
+const commissionList=$("#commissionList");
+const commissionTemplate=$("#commissionTemplate");
 
-$("#addCommission").onclick = () => {
+if($("#addCommission")){
 
-const node = commissionTemplate.content.cloneNode(true);
+$("#addCommission").onclick=()=>{
 
-const card = node.querySelector(".commissionCard");
+    const node=
+    commissionTemplate.content.cloneNode(true);
 
-const preview = card.querySelector(".commissionPreview");
+    const card=
+    node.querySelector(".commissionCard");
 
-const imageInput = card.querySelector(".commissionImage");
+    const preview=
+    card.querySelector(".commissionPreview");
 
-const galleryInput = card.querySelector(".commissionGalleryInput");
+    const image=
+    card.querySelector(".commissionImage");
 
-const gallery = card.querySelector(".commissionGalleryPreview");
+    const galleryInput=
+    card.querySelector(".commissionGalleryInput");
 
-// --------------------------
-// Cover Image
-// --------------------------
+    const gallery=
+    card.querySelector(".commissionGalleryPreview");
 
-preview.onclick = () => imageInput.click();
+    // ----------------------
+    // Cover
+    // ----------------------
 
-imageInput.onchange = () => {
+    preview.onclick=()=>{
 
-const file = imageInput.files[0];
+        image.click();
 
-if(!file) return;
+    };
 
-const reader = new FileReader();
+    image.onchange=()=>{
 
-reader.onload = e => {
+        const file=image.files[0];
 
-preview.src = e.target.result;
+        if(!file) return;
 
-autoSave();
+        const reader=new FileReader();
+
+        reader.onload=e=>{
+
+            preview.src=e.target.result;
+
+            rebuildGallery();
+
+            autoSave();
+
+        };
+
+        reader.readAsDataURL(file);
+
+    };
+
+    // ----------------------
+    // Gallery
+    // ----------------------
+
+    galleryInput.onchange=()=>{
+
+        [...galleryInput.files].forEach(file=>{
+
+            const reader=new FileReader();
+
+            reader.onload=e=>{
+
+                const img=document.createElement("img");
+
+                img.src=e.target.result;
+
+                img.onclick=()=>{
+
+                    viewer.classList.add("show");
+
+                    viewerImage.src=img.src;
+
+                };
+
+                gallery.appendChild(img);
+
+                rebuildGallery();
+
+            };
+
+            reader.readAsDataURL(file);
+
+        });
+
+        autoSave();
+
+    };
+
+    // ----------------------
+    // Auto Save
+    // ----------------------
+
+    card.querySelectorAll(
+        "input,textarea"
+    ).forEach(el=>{
+
+        el.oninput=autoSave;
+
+        el.onchange=autoSave;
+
+    });
+
+    // ----------------------
+    // Delete
+    // ----------------------
+
+    card.querySelector(
+        ".deleteCommission"
+    ).onclick=()=>{
+
+        card.remove();
+
+        rebuildGallery();
+
+        updateCommissionCount();
+
+        autoSave();
+
+    };
+
+    // ----------------------
+    // Viewer
+    // ----------------------
+
+    preview.addEventListener("click",()=>{
+
+        viewer.classList.add("show");
+
+        viewerImage.src=preview.src;
+
+    });
+
+    commissionList.appendChild(card);
+
+    updateCommissionCount();
+
+    autoSave();
 
 };
 
-reader.readAsDataURL(file);
+}
 
-};
+// ==========================================
+// Commission Counter
+// ==========================================
 
-// --------------------------
-// Gallery
-// --------------------------
+function updateCommissionCount(){
 
-galleryInput.onchange = () => {
+    const stat=$("#statCommission");
 
-gallery.innerHTML = "";
+    if(!stat) return;
 
-[...galleryInput.files].forEach(file=>{
+    stat.textContent=
 
-const reader = new FileReader();
+    commissionList
+    .querySelectorAll(".commissionCard")
+    .length;
 
-reader.onload = e => {
+}
 
-const img = document.createElement("img");
+if(commissionList){
 
-img.src = e.target.result;
+new MutationObserver(()=>{
 
-img.onclick = ()=>{
+    updateCommissionCount();
 
-viewer.classList.add("show");
+}).observe(
 
-viewerImage.src = img.src;
+commissionList,
 
-};
+{
 
-gallery.appendChild(img);
+childList:true
 
-};
+}
 
-reader.readAsDataURL(file);
+);
 
-});
+}
 
-autoSave();
-
-};
-
-// --------------------------
-// Delete
-// --------------------------
-
-card.querySelector(".deleteCommission").onclick = () => {
-
-card.remove();
-
-autoSave();
-
-};
-
-// --------------------------
-// Auto Save
-// --------------------------
-
-card.querySelectorAll("input,textarea").forEach(el=>{
-
-el.oninput = autoSave;
-
-el.onchange = autoSave;
-
-});
-
-// --------------------------
-// Viewer
-// --------------------------
-
-preview.addEventListener("click",
+updateCommissionCount();
 // ==========================================
 // JSON Export
 // ==========================================
 
-$("#exportJSON").onclick=()=>{
+const exportBtn=$("#exportJSON");
+const importBtn=$("#importJSON");
+const jsonFile=$("#jsonFile");
 
-const data=collectData();
+if(exportBtn){
 
-const blob=new Blob(
+exportBtn.onclick=()=>{
 
-[JSON.stringify(data,null,2)],
+    const data=collectData();
 
-{type:"application/json"}
+    const blob=new Blob(
 
-);
+        [JSON.stringify(data,null,2)],
 
-const url=URL.createObjectURL(blob);
+        {
 
-const a=document.createElement("a");
+            type:"application/json"
 
-a.href=url;
+        }
 
-a.download="dream_archive.json";
+    );
 
-a.click();
+    const url=
 
-URL.revokeObjectURL(url);
+    URL.createObjectURL(blob);
 
-toastMessage("JSON 백업 완료");
+    const a=document.createElement("a");
+
+    a.href=url;
+
+    a.download="dream_archive.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    toastMessage("JSON 백업 완료");
 
 };
+
+}
 
 // ==========================================
 // JSON Import
 // ==========================================
 
-$("#importJSON").onclick=()=>{
+if(importBtn){
 
-$("#jsonFile").click();
+importBtn.onclick=()=>{
+
+    jsonFile.click();
 
 };
-
-$("#jsonFile").onchange=e=>{
-
-const file=e.target.files[0];
-
-if(!file) return;
-
-const reader=new FileReader();
-
-reader.onload=x=>{
-
-try{
-
-const data=JSON.parse(x.target.result);
-
-applyData(data);
-
-autoSave();
-
-toastMessage("불러오기 완료");
-
-}catch{
-
-toastMessage("JSON 오류");
 
 }
 
+if(jsonFile){
+
+jsonFile.onchange=e=>{
+
+    const file=e.target.files[0];
+
+    if(!file) return;
+
+    const reader=new FileReader();
+
+    reader.onload=x=>{
+
+        try{
+
+            const data=
+
+            JSON.parse(x.target.result);
+
+            applyData(data);
+
+            autoSave();
+
+            rebuildGallery();
+
+            toastMessage("불러오기 완료");
+
+        }
+
+        catch(err){
+
+            console.error(err);
+
+            toastMessage("JSON 오류");
+
+        }
+
+    };
+
+    reader.readAsText(file);
+
 };
 
-reader.readAsText(file);
-
-};
+}
 
 // ==========================================
 // Gallery
@@ -971,413 +1295,164 @@ const galleryGrid=$("#galleryGrid");
 
 function rebuildGallery(){
 
-if(!galleryGrid) return;
+    if(!galleryGrid) return;
 
-galleryGrid.innerHTML="";
+    galleryGrid.innerHTML="";
 
-document
+    // 대표 이미지
 
-.querySelectorAll(
+    document.querySelectorAll(
 
-".auPreview,.commissionPreview,.relationPreview"
+    ".relationPreview,.auPreview,.commissionPreview"
 
-)
+    ).forEach(img=>{
 
-.forEach(img=>{
+        if(
 
-if(
+            !img.src ||
 
-!img.src ||
+            img.src.includes("default.png")
 
-img.src.includes("default.png")
+        ){
 
-) return;
+            return;
 
-const clone=document.createElement("img");
+        }
 
-clone.src=img.src;
+        const clone=document.createElement("img");
 
-clone.className="galleryImage";
+        clone.src=img.src;
 
-clone.onclick=()=>{
+        clone.className="galleryImage";
 
-viewer.classList.add("show");
+        clone.onclick=()=>{
 
-viewerImage.src=clone.src;
+            viewer.classList.add("show");
 
-};
+            viewerImage.src=clone.src;
 
-galleryGrid.appendChild(clone);
+        };
 
-});
+        galleryGrid.appendChild(clone);
 
-document
+    });
 
-.querySelectorAll(
+    // 갤러리 이미지
 
-".galleryPreview img,.commissionGalleryPreview img"
+    document.querySelectorAll(
 
-)
+    ".galleryPreview img,.commissionGalleryPreview img"
 
-.forEach(img=>{
+    ).forEach(img=>{
 
-const clone=document.createElement("img");
+        const clone=document.createElement("img");
 
-clone.src=img.src;
+        clone.src=img.src;
 
-clone.className="galleryImage";
+        clone.className="galleryImage";
 
-clone.onclick=()=>{
+        clone.onclick=()=>{
 
-viewer.classList.add("show");
+            viewer.classList.add("show");
 
-viewerImage.src=clone.src;
+            viewerImage.src=clone.src;
 
-};
+        };
 
-galleryGrid.appendChild(clone);
+        galleryGrid.appendChild(clone);
 
-});
+    });
 
 }
 
 // ==========================================
-// Gallery Observe
+// Gallery Observer
 // ==========================================
 
 new MutationObserver(()=>{
 
-rebuildGallery();
+    rebuildGallery();
 
-}).observe(document.body,{
+}).observe(
+
+document.body,
+
+{
 
 childList:true,
 
 subtree:true
 
-});
+}
+
+);
 
 rebuildGallery();
-// ==========================================
-// Last Save Time
-// ==========================================
-
-function updateLastSave(){
-
-const now=new Date();
-
-$("#lastSaveTime").textContent=
-
-now.toLocaleString("ko-KR");
-
-}
-
-// ==========================================
-// Cloud Save
-// ==========================================
-
-async function cloudSave(){
-
-if(!db) return;
-
-try{
-
-loadingOn();
-
-const data=collectData();
-
-await db
-
-.from("archives")
-
-.upsert([{
-
-id:1,
-
-data:data,
-
-updated_at:new Date().toISOString()
-
-}]);
-
-updateLastSave();
-
-toastMessage("☁️ 클라우드 저장");
-
-}catch(err){
-
-console.error(err);
-
-toastMessage("저장 실패");
-
-}
-
-loadingOff();
-
-}
-
-// ==========================================
-// Cloud Load
-// ==========================================
-
-async function cloudLoad(){
-
-if(!db) return;
-
-try{
-
-loadingOn();
-
-const {data,error}=await db
-
-.from("archives")
-
-.select("*")
-
-.eq("id",1)
-
-.single();
-
-if(error) return;
-
-if(data){
-
-applyData(data.data);
-
-updateLastSave();
-
-rebuildGallery();
-
-}
-
-}catch(err){
-
-console.error(err);
-
-}
-
-loadingOff();
-
-}
-
-// ==========================================
-// Auto Sync
-// ==========================================
-
-let saveTimer;
-
-function syncSave(){
-
-clearTimeout(saveTimer);
-
-saveTimer=setTimeout(async()=>{
-
-saveLocal();
-
-await cloudSave();
-
-},800);
-
-}
-
-document
-
-.querySelectorAll("input,textarea,select")
-
-.forEach(el=>{
-
-el.addEventListener("input",syncSave);
-
-el.addEventListener("change",syncSave);
-
-});
-
-// ==========================================
-// Save Button
-// ==========================================
-
-saveBtn.onclick=async()=>{
-
-saveLocal();
-
-await cloudSave();
-
-};
-
 // ==========================================
 // Delete Archive
 // ==========================================
 
-$("#deleteDream").onclick=async()=>{
+const deleteArchive = $("#deleteArchive");
 
-if(!confirm("정말 삭제하시겠습니까?")) return;
+if(deleteArchive){
 
-localStorage.removeItem(STORAGE_KEY);
+    deleteArchive.onclick = async () => {
 
-if(db){
+        if(!confirm("정말 삭제하시겠습니까?")) return;
 
-try{
+        localStorage.removeItem(STORAGE_KEY);
 
-await db
+        if(db){
 
-.from("archives")
+            try{
 
-.delete()
+                await db
+                .from("archives")
+                .delete()
+                .eq("id",1);
 
-.eq("id",1);
+            }catch(err){
 
-}catch(err){
+                console.error(err);
 
-console.error(err);
+            }
 
-}
+        }
 
-}
+        location.reload();
 
-location.reload();
-
-};
-
-// ==========================================
-// Ctrl + S
-// ==========================================
-
-document.addEventListener("keydown",async e=>{
-
-if(e.ctrlKey&&e.key==="s"){
-
-e.preventDefault();
-
-saveLocal();
-
-await cloudSave();
+    };
 
 }
-
-});
-// ==========================================
-// Initialize
-// ==========================================
-
-window.addEventListener("load",async()=>{
-
-loadLocal();
-
-await cloudLoad();
-
-updateDday();
-
-rebuildGallery();
-
-updateAUCount();
-
-updateCommissionCount();
-
-toastMessage("Dream Archive Ready");
-
-});
-
-// ==========================================
-// Auto Save (30s)
-// ==========================================
-
-setInterval(async()=>{
-
-saveLocal();
-
-await cloudSave();
-
-},30000);
-
-// ==========================================
-// Before Exit
-// ==========================================
-
-window.addEventListener("beforeunload",()=>{
-
-saveLocal();
-
-});
-
-// ==========================================
-// Statistics
-// ==========================================
-
-function updateStats(){
-
-const au=$("#statAU");
-
-const commission=$("#statCommission");
-
-const day=$("#statDay");
-
-if(day){
-
-day.textContent=$("#dday").textContent;
-
-}
-
-if(au){
-
-au.textContent=
-
-document.querySelectorAll(".auCard").length;
-
-}
-
-if(commission){
-
-commission.textContent=
-
-document.querySelectorAll(".commissionCard").length;
-
-}
-
-}
-
-setInterval(updateStats,1000);
-
-// ==========================================
-// Mutation Update
-// ==========================================
-
-new MutationObserver(()=>{
-
-updateStats();
-
-rebuildGallery();
-
-}).observe(document.body,{
-
-childList:true,
-
-subtree:true
-
-});
 
 // ==========================================
 // Change Cover
 // ==========================================
 
-$("#changeCover").onclick=()=>{
+const changeCover = $("#changeCover");
 
-imageInput.click();
+if(changeCover){
 
-};
+    changeCover.onclick = () => {
+
+        imageInput.click();
+
+    };
+
+}
 
 // ==========================================
 // ESC Close Viewer
 // ==========================================
 
-document.addEventListener("keydown",e=>{
+document.addEventListener("keydown", e => {
 
-if(e.key==="Escape"){
+    if (e.key === "Escape") {
 
-viewer.classList.remove("show");
+        viewer.classList.remove("show");
+        settingModal.classList.remove("show");
 
-settingModal.classList.remove("show");
-
-}
+    }
 
 });
 
@@ -1385,31 +1460,31 @@ settingModal.classList.remove("show");
 // Drag & Drop Cover
 // ==========================================
 
-preview.addEventListener("dragover",e=>{
+preview.addEventListener("dragover", e => {
 
-e.preventDefault();
+    e.preventDefault();
 
 });
 
-preview.addEventListener("drop",e=>{
+preview.addEventListener("drop", e => {
 
-e.preventDefault();
+    e.preventDefault();
 
-const file=e.dataTransfer.files[0];
+    const file = e.dataTransfer.files[0];
 
-if(!file) return;
+    if (!file) return;
 
-const reader=new FileReader();
+    const reader = new FileReader();
 
-reader.onload=x=>{
+    reader.onload = x => {
 
-preview.src=x.target.result;
+        preview.src = x.target.result;
 
-autoSave();
+        autoSave();
 
-};
+    };
 
-reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
 
 });
 
@@ -1417,4 +1492,4 @@ reader.readAsDataURL(file);
 // Finish
 // ==========================================
 
-console.log("Dream Archive v2 Loaded");
+console.log("Dream Archive v3 Loaded");
