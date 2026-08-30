@@ -11,3 +11,6 @@ const supabase = window.supabase.createClient(
     supabaseKey
 );
 alert("supabase 생성 완료");
+alert(typeof window.supabase);
+alert(typeof supabase);
+alert(typeof supabase.auth);
