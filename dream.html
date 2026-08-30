@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Dream Archive</title>
+
+<link rel="stylesheet" href="dream.css">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="background">
+
+<div class="blur one"></div>
+
+<div class="blur two"></div>
+
+<div class="blur three"></div>
+
+</div>
+
+<header>
+
+<button id="backBtn">
+
+← HOME
+
+</button>
+
+<div>
+
+<button id="saveBtn">
+
+💾 저장
+
+</button>
+
+</div>
+
+</header>
+
+<section class="profile">
+
+<div class="imageArea">
+
+<label for="mainImage">
+
+<img
+id="previewImage"
+
+src="default.png">
+
+</label>
+
+<input
+type="file"
+
+id="mainImage"
+
+accept="image/*"
+
+hidden>
+
+</div>
+
+<div class="dreamInfo">
+
+<input
+
+id="dreamName"
+
+placeholder="Dream Name">
+
+<p id="dday">
+
+D+0
+
+</p>
+
+<input
+
+type="date"
+
+id="startDate">
+
+<textarea
+
+id="intro"
+
+placeholder="한줄 소개">
+
+</textarea>
+
+</div>
+
+</section>
+
+<!-- ===========================
+탭 메뉴
+=========================== -->
+
+<nav class="tabMenu">
+
+<button class="tab active"
+
+data-tab="appearance">
+
+외관
+
+</button>
+
+<button class="tab"
+
+data-tab="setting">
+
+설정
+
+</button>
+
+<button class="tab"
+
+data-tab="story">
+
+서사
+
+</button>
+
+<button class="tab"
+
+data-tab="relation">
+
+관계
+
+</button>
+
+<button class="tab"
+
+data-tab="au">
+
+AU
+
+</button>
+
+<button class="tab"
+
+data-tab="commission">
+
+커미션
+
+</button>
+
+<button class="tab"
+
+data-tab="log">
+
+로그
+
+</button>
+
+</nav>
+
+
+
+<!-- ===========================
+컨텐츠
+=========================== -->
+
+<div class="contentArea">
+
+<!-- 외관 -->
+
+<div class="tabContent active"
+
+id="appearance">
+
+<h2>
+
+외관
+
+</h2>
+
+<textarea
+
+id="appearanceText"
+
+placeholder="외관을 작성해주세요.">
+
+</textarea>
+
+</div>
+
+
+
+<!-- 설정 -->
+
+<div class="tabContent"
+
+id="setting">
+
+<h2>
+
+설정
+
+</h2>
+
+<textarea
+
+id="settingText"
+
+placeholder="설정을 작성해주세요.">
+
+</textarea>
+
+</div>
+
+
+
+<!-- 서사 -->
+
+<div class="tabContent"
+
+id="story">
+
+<h2>
+
+서사
+
+</h2>
+
+<textarea
+
+id="storyText"
+
+placeholder="서사를 작성해주세요.">
+
+</textarea>
+
+</div>
+
+
+
+<!-- 관계 -->
+
+<div class="tabContent"
+
+id="relation">
+
+<h2>
+
+관계
+
+</h2>
+
+<textarea
+
+id="relationText"
+
+placeholder="관계를 작성해주세요.">
+
+</textarea>
+
+</div>
+
+
+
+<!-- AU -->
+
+<div class="tabContent"
+
+id="au">
+
+<h2>
+
+AU
+
+</h2>
+
+<textarea
+
+id="auText"
+
+placeholder="AU를 작성해주세요.">
+
+</textarea>
+
+</div>
+
+
+
+<!-- 커미션 -->
+
+<div class="tabContent"
+
+id="commission">
+
+<h2>
+
+커미션
+
+</h2>
+
+<textarea
+
+id="commissionText"
+
+placeholder="커미션 정보를 작성해주세요.">
+
+</textarea>
+
+</div>
+
+
+
+<!-- 로그 -->
+
+<div class="tabContent"
+
+id="log">
+
+<h2>
+
+로그
+
+</h2>
+
+<textarea
+
+id="logText"
+
+placeholder="로그를 작성해주세요.">
+
+</textarea>
+
+</div>
+
+</div>
+<!-- ===========================
+저장 상태
+=========================== -->
+
+<div class="saveStatus">
+
+<span id="saveState">
+
+🟢 자동 저장 활성화
+
+</span>
+
+</div>
+
+<!-- ===========================
+Toast
+=========================== -->
+
+<div id="toast">
+
+저장되었습니다.
+
+</div>
+
+<!-- ===========================
+Setting Modal
+=========================== -->
+
+<div id="settingModal" class="modal">
+
+<div class="modalBox">
+
+<h2>
+
+설정
+
+</h2>
+
+<button id="changeCover">
+
+대표 이미지 변경
+
+</button>
+
+<button id="exportJSON">
+
+JSON 백업
+
+</button>
+
+<button id="importJSON">
+
+JSON 복원
+
+</button>
+
+<input
+type="file"
+id="jsonFile"
+accept=".json"
+hidden>
+
+<button id="deleteDream">
+
+드림 삭제
+
+</button>
+
+<button id="closeSetting">
+
+닫기
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ===========================
+Floating
+=========================== -->
+
+<div class="floating one">
+
+🌸
+
+</div>
+
+<div class="floating two">
+
+✨
+
+</div>
+
+<div class="floating three">
+
+☁️
+
+</div>
+
+<!-- ===========================
+Script
+=========================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+<script src="dream.js"></script>
+
+</body>
+
+</html>
+<!-- ===========================
+AU
+=========================== -->
+
+<div class="tabContent" id="au">
+
+<div class="sectionHeader">
+
+<h2>AU</h2>
+
+<button id="addAU">
+
+＋ AU 추가
+
+</button>
+
+</div>
+
+<div id="auList">
+
+<!-- JS가 생성 -->
+
+</div>
+
+</div>
+
+
+
+<!-- ===========================
+커미션
+=========================== -->
+
+<div class="tabContent" id="commission">
+
+<div class="sectionHeader">
+
+<h2>커미션</h2>
+
+<button id="addCommission">
+
+＋ 커미션 추가
+
+</button>
+
+</div>
+
+<div id="commissionList">
+
+</div>
+
+</div>
+
+
+
+<!-- ===========================
+로그
+=========================== -->
+
+<div class="tabContent" id="log">
+
+<div class="sectionHeader">
+
+<h2>로그</h2>
+
+<button id="addLog">
+
+＋ 로그 작성
+
+</button>
+
+</div>
+
+<div id="logList">
+
+</div>
+
+</div>
+
+
+
+<!-- ===========================
+AU Template
+=========================== -->
+
+<template id="auTemplate">
+
+<div class="card">
+
+<input
+class="auTitle"
+placeholder="AU 이름">
+
+<textarea
+class="auContent"
+placeholder="설명">
+
+</textarea>
+
+<input
+type="file"
+class="auImage"
+accept="image/*">
+
+</div>
+
+</template>
+
+
+
+<!-- ===========================
+Commission Template
+=========================== -->
+
+<template id="commissionTemplate">
+
+<div class="card">
+
+<input
+
+class="artist"
+
+placeholder="작가님">
+
+<input
+
+class="link"
+
+placeholder="링크">
+
+<textarea
+
+class="memo"
+
+placeholder="메모">
+
+</textarea>
+
+<input
+type="file"
+
+class="commissionImage"
+
+accept="image/*">
+
+</div>
+
+</template>
+
+
+
+<!-- ===========================
+Log Template
+=========================== -->
+
+<template id="logTemplate">
+
+<div class="card">
+
+<input
+
+type="date"
+
+class="logDate">
+
+<input
+
+class="logTitle"
+
+placeholder="제목">
+
+<textarea
+
+class="logContent"
+
+placeholder="내용">
+
+</textarea>
+
+<input
+type="file"
+
+class="logImage"
+
+accept="image/*">
+
+</div>
+
+</template>
+<!-- ===========================
+관계
+=========================== -->
+
+<div class="tabContent" id="relation">
+
+<div class="sectionHeader">
+
+<h2>
+
+관계
+
+</h2>
+
+<button id="addRelation">
+
+＋ 관계 추가
+
+</button>
+
+</div>
+
+<div id="relationList">
+
+</div>
+
+</div>
+
+
+
+<!-- ===========================
+타임라인
+=========================== -->
+
+<div class="timelineSection">
+
+<div class="sectionHeader">
+
+<h2>
+
+드림 타임라인
+
+</h2>
+
+<button id="addTimeline">
+
+＋ 일정 추가
+
+</button>
+
+</div>
+
+<div id="timelineList">
+
+</div>
+
+</div>
+
+
+
+<!-- ===========================
+관계 Template
+=========================== -->
+
+<template id="relationTemplate">
+
+<div class="card relationCard">
+
+<input
+
+class="relationName"
+
+placeholder="캐릭터 이름">
+
+<input
+
+class="relationType"
+
+placeholder="관계 (연인, 친구 등)">
+
+<textarea
+
+class="relationMemo"
+
+placeholder="관계 설명">
+
+</textarea>
+
+<input
+type="file"
+
+class="relationImage"
+
+accept="image/*">
+
+<button class="deleteRelation">
+
+삭제
+
+</button>
+
+</div>
+
+</template>
+
+
+
+<!-- ===========================
+Timeline Template
+=========================== -->
+
+<template id="timelineTemplate">
+
+<div class="timelineCard">
+
+<div class="timelineLeft">
+
+<div class="timelineDot"></div>
+
+</div>
+
+<div class="timelineRight">
+
+<input
+
+type="date"
+
+class="timelineDate">
+
+<input
+
+class="timelineTitle"
+
+placeholder="제목">
+
+<textarea
+
+class="timelineContent"
+
+placeholder="내용">
+
+</textarea>
+
+<input
+type="file"
+
+class="timelineImage"
+
+accept="image/*">
+
+<button class="deleteTimeline">
+
+삭제
+
+</button>
+
+</div>
+
+</div>
+
+</template>
+
+
+
+<!-- ===========================
+자동 저장 상태
+=========================== -->
+
+<div class="autoSave">
+
+<span class="saveIcon">
+
+☁️
+
+</span>
+
+<span id="saveText">
+
+자동 저장 활성화
+
+</span>
+
+</div>
+
+
+
+<!-- ===========================
+삭제 확인
+=========================== -->
+
+<div id="deleteModal" class="modal">
+
+<div class="modalBox">
+
+<h2>
+
+드림 삭제
+
+</h2>
+
+<p>
+
+삭제하면 복구할 수 없습니다.
+
+</p>
+
+<div class="modalButtons">
+
+<button id="cancelDelete">
+
+취소
+
+</button>
+
+<button id="confirmDelete">
+
+삭제
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<!-- ===========================
+통계
+=========================== -->
+
+<section class="dreamStats">
+
+<div class="statCard">
+
+<h3>D-Day</h3>
+
+<p id="statDay">D+0</p>
+
+</div>
+
+<div class="statCard">
+
+<h3>AU</h3>
+
+<p id="statAU">0</p>
+
+</div>
+
+<div class="statCard">
+
+<h3>커미션</h3>
+
+<p id="statCommission">0</p>
+
+</div>
+
+<div class="statCard">
+
+<h3>로그</h3>
+
+<p id="statLog">0</p>
+
+</div>
+
+</section>
+
+
+
+<!-- ===========================
+마지막 저장
+=========================== -->
+
+<div class="lastSave">
+
+<p>
+
+마지막 저장
+
+</p>
+
+<span id="lastSaveTime">
+
+-
+
+</span>
+
+</div>
+
+
+
+<!-- ===========================
+사진 확대
+=========================== -->
+
+<div id="imageViewer" class="viewer">
+
+<span id="closeViewer">
+
+✕
+
+</span>
+
+<img id="viewerImage">
+
+</div>
+
+
+
+<!-- ===========================
+하단 메뉴(모바일)
+=========================== -->
+
+<nav class="mobileMenu">
+
+<button data-tab="appearance">
+
+👤
+
+</button>
+
+<button data-tab="story">
+
+📖
+
+</button>
+
+<button data-tab="relation">
+
+💞
+
+</button>
+
+<button data-tab="au">
+
+🌎
+
+</button>
+
+<button data-tab="commission">
+
+🎨
+
+</button>
+
+<button data-tab="log">
+
+📝
+
+</button>
+
+</nav>
+
+
+
+<!-- ===========================
+Toast
+=========================== -->
+
+<div id="toast">
+
+저장되었습니다.
+
+</div>
+
+
+
+<!-- ===========================
+Loading
+=========================== -->
+
+<div id="loadingScreen">
+
+<div class="loadingBox">
+
+<div class="loader"></div>
+
+<p>
+
+Saving...
+
+</p>
+
+</div>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+<script src="dream.js"></script>
+
+</body>
+
+</html>
