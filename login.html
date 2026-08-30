@@ -1,38 +1,64 @@
-alert("login.js 로드됨");
+<!DOCTYPE html>
+<html lang="ko">
 
-const loginForm = document.getElementById("loginForm");
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Archive | Login</title>
 
-alert(loginForm);
+    <link rel="stylesheet" href="login.css">
 
-if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        alert("로그인 버튼 눌림");
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+</head>
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+<body>
 
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
+<div class="background"></div>
 
-        if (error) {
-            alert(error.message);
-            return;
-        }
+<div class="loginCard">
 
-        alert("로그인 성공");
+    <h1>Dream Archive</h1>
 
-        location.href = "index.html";
-    });
-}
+    <p class="subtitle">
+        모든 추억을 기록하는 작은 공간
+    </p>
 
+    <form id="loginForm">
+
+        <input
+            type="email"
+            id="email"
+            placeholder="이메일"
+            required>
+
+        <input
+            type="password"
+            id="password"
+            placeholder="비밀번호"
+            required>
+
+        <button type="submit">
+            로그인
+        </button>
+
+    </form>
+
+    <div class="bottom">
+        <p>계정이 없으신가요?</p>
+        <a href="signup.html">회원가입</a>
+    </div>
+
+</div>
+
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 내 파일 -->
 <script src="supabase.js"></script>
 <script src="login.js"></script>
 
-<script>
-alert("스크립트 실행됨");
-</script>
+</body>
+</html>
