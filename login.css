@@ -240,3 +240,124 @@ height:50px;
 }
 
 }
+
+/* ===========================
+   로그인 성공 애니메이션
+=========================== */
+
+.loginSuccess{
+
+animation:loginSuccess .9s cubic-bezier(.22,1,.36,1) forwards;
+
+}
+
+@keyframes loginSuccess{
+
+0%{
+
+opacity:1;
+transform:scale(1);
+
+}
+
+40%{
+
+transform:scale(.96);
+
+}
+
+70%{
+
+transform:scale(1.04);
+
+}
+
+100%{
+
+opacity:0;
+transform:scale(1.15);
+
+filter:blur(8px);
+
+}
+
+}
+
+/* 버튼 성공 효과 */
+
+button.success{
+
+background:#BFE9C8;
+color:#356241;
+
+animation:buttonPop .6s ease;
+
+}
+
+@keyframes buttonPop{
+
+0%{
+
+transform:scale(1);
+
+}
+
+40%{
+
+transform:scale(.94);
+
+}
+
+70%{
+
+transform:scale(1.06);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+/* 성공 후 화면 페이드 */
+
+.screenFade{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+background:white;
+
+pointer-events:none;
+
+opacity:0;
+
+z-index:9999;
+
+animation:screenFade .8s forwards;
+
+}
+
+@keyframes screenFade{
+
+0%{
+
+opacity:0;
+
+}
+
+100%{
+
+opacity:1;
+
+}
+
+}
