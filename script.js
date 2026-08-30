@@ -104,6 +104,9 @@ async function logout() {
 async function loadDreams() {
 
     alert("loadDreams 시작");
+    alert(typeof supabase);
+alert(typeof supabase.from);
+console.log(supabase);
 
     const { data, error } = await supabase
         .from("dreams")
