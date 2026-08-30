@@ -1,16 +1,7 @@
-// =========================
-// Supabase 연결
-// =========================
+const SUPABASE_URL = "https://dtwtvjrqrweclbkrckeh.supabase.co";
+const SUPABASE_KEY = "여기에 네 publishable key";
 
-const supabaseUrl = "https://dtwtvjrqrweclbkrckeh.supabase.co";
-
-const supabaseKey = "sb_publishable_th-F0YuEsB6JNtOjT8s-bw_gSPocZdU";
-
-const supabase = window.supabase.createClient(
-    supabaseUrl,
-    supabaseKey
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
-alert("supabase 생성 완료");
-alert(typeof window.supabase);
-alert(typeof supabase);
-alert(typeof supabase.auth);
