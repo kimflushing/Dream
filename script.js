@@ -1,3 +1,4 @@
+alert("script 시작");
 // =========================
 // Dream Archive
 // script.js (1)
@@ -756,3 +757,4 @@ e.target.src="default.png";
 // -------------------------
 
 console.log("Dream Archive Loaded");
+alert("script 끝");
