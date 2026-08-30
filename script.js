@@ -36,16 +36,30 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 async function checkLogin() {
 
-    const { data } = await supabase.auth.getUser();
+    try {
 
-    if (!data.user) {
+        const { data, error } = await supabase.auth.getUser();
 
-        location.href = "login.html";
-        return;
+        if (error) {
+            alert("getUser 에러 : " + error.message);
+            return;
+        }
+
+        if (!data.user) {
+            alert("로그인 안됨");
+            location.href = "login.html";
+            return;
+        }
+
+        user = data.user;
+
+        alert("로그인 확인 완료");
+
+    } catch (e) {
+
+        alert("checkLogin 오류 : " + e.message);
 
     }
-
-    user = data.user;
 
 }
 
