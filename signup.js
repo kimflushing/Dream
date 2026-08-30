@@ -1,3 +1,6 @@
+alert(typeof db);
+alert(typeof db.auth);
+alert("signup.js 실행");
 const signupForm = document.getElementById("signupForm");
 
 (async () => {
