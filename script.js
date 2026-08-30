@@ -47,6 +47,11 @@ async function checkLogin() {
 
 function bindEvents() {
 
+    alert("bindEvents 실행");
+
+    console.log(document.getElementById("logoutBtn"));
+    console.log(document.getElementById("createDream"));
+
     document.getElementById("logoutBtn").onclick = logout;
 
     document.getElementById("searchInput").oninput = searchDream;
