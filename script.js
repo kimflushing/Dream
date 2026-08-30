@@ -271,9 +271,39 @@ function closeModal() {
 // 이벤트 추가
 // -------------------------
 
-document.getElementById("saveDream").onclick = saveDream;
+function bindEvents() {
 
-document.getElementById("dreamImage").onchange = previewImage;
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.onclick = logout;
+    }
+
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+        searchInput.oninput = searchDream;
+    }
+
+    const createDream = document.getElementById("createDream");
+    if (createDream) {
+        createDream.onclick = openModal;
+    }
+
+    const closeModalBtn = document.getElementById("closeModal");
+    if (closeModalBtn) {
+        closeModalBtn.onclick = closeModal;
+    }
+
+    const saveDreamBtn = document.getElementById("saveDream");
+    if (saveDreamBtn) {
+        saveDreamBtn.onclick = saveDream;
+    }
+
+    const dreamImage = document.getElementById("dreamImage");
+    if (dreamImage) {
+        dreamImage.onchange = previewImage;
+    }
+
+}
 
 
 // -------------------------
