@@ -1,0 +1,1670 @@
+/* =========================================
+   Dream Archive
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Gowun Dodum",sans-serif;
+}
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+body{
+
+background:#FFF9FC;
+
+color:#555;
+
+overflow-x:hidden;
+
+min-height:100vh;
+
+opacity:0;
+
+transition:.7s;
+
+}
+
+body.loaded{
+
+opacity:1;
+
+}
+
+/* =====================
+Background
+===================== */
+
+.bg{
+
+position:fixed;
+
+inset:0;
+
+z-index:-10;
+
+overflow:hidden;
+
+}
+
+.blur{
+
+position:absolute;
+
+border-radius:50%;
+
+filter:blur(100px);
+
+opacity:.45;
+
+animation:float 12s ease-in-out infinite;
+
+}
+
+.b1{
+
+width:350px;
+
+height:350px;
+
+background:#FFD8E8;
+
+left:-100px;
+
+top:-80px;
+
+}
+
+.b2{
+
+width:420px;
+
+height:420px;
+
+background:#FFF0C7;
+
+right:-120px;
+
+top:20%;
+
+animation-delay:2s;
+
+}
+
+.b3{
+
+width:350px;
+
+height:350px;
+
+background:#E9E2FF;
+
+bottom:-120px;
+
+left:35%;
+
+animation-delay:4s;
+
+}
+
+@keyframes float{
+
+0%{
+
+transform:translateY(0px);
+
+}
+
+50%{
+
+transform:translateY(-30px);
+
+}
+
+100%{
+
+transform:translateY(0px);
+
+}
+
+}
+
+/* =====================
+Header
+===================== */
+
+header{
+
+width:100%;
+
+padding:35px 7%;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.logo h1{
+
+font-size:42px;
+
+color:#5E5159;
+
+font-weight:700;
+
+}
+
+.logo p{
+
+margin-top:8px;
+
+font-size:15px;
+
+color:#9B8D94;
+
+}
+
+/* =====================
+Setting
+===================== */
+
+.headerRight{
+
+display:flex;
+
+gap:15px;
+
+align-items:center;
+
+}
+
+#settingBtn{
+
+width:55px;
+
+height:55px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-size:22px;
+
+background:white;
+
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+#settingBtn:hover{
+
+transform:rotate(90deg);
+
+background:#FFE7F2;
+
+}
+/* =====================
+Search
+===================== */
+
+.searchSection{
+
+width:100%;
+
+padding:10px 7% 0;
+
+display:flex;
+
+justify-content:center;
+
+}
+
+#searchInput{
+
+width:100%;
+max-width:650px;
+
+height:60px;
+
+padding:0 25px;
+
+border:none;
+
+border-radius:22px;
+
+outline:none;
+
+background:rgba(255,255,255,.75);
+
+backdrop-filter:blur(20px);
+
+font-size:16px;
+
+color:#555;
+
+box-shadow:0 8px 30px rgba(0,0,0,.06);
+
+transition:.3s;
+
+}
+
+#searchInput:focus{
+
+transform:translateY(-3px);
+
+box-shadow:0 15px 35px rgba(255,180,210,.25);
+
+}
+
+
+
+/* =====================
+Top Button
+===================== */
+
+.topButtons{
+
+padding:35px 7%;
+
+display:flex;
+
+justify-content:center;
+
+}
+
+#createDream{
+
+padding:18px 38px;
+
+border:none;
+
+border-radius:22px;
+
+cursor:pointer;
+
+font-size:17px;
+
+font-weight:bold;
+
+background:linear-gradient(
+135deg,
+#FFD7E7,
+#FFECC8
+);
+
+color:#5D5056;
+
+transition:.35s;
+
+box-shadow:0 12px 25px rgba(255,185,210,.22);
+
+}
+
+#createDream:hover{
+
+transform:translateY(-5px) scale(1.03);
+
+box-shadow:0 20px 35px rgba(255,170,205,.30);
+
+}
+
+
+
+/* =====================
+Dream List
+===================== */
+
+#dreamList{
+
+width:100%;
+
+padding:10px 7% 80px;
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fill,minmax(300px,1fr));
+
+gap:30px;
+
+align-items:start;
+
+}
+
+
+
+/* =====================
+Empty
+===================== */
+
+.emptyBox{
+
+grid-column:1/-1;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+padding:120px 20px;
+
+background:rgba(255,255,255,.55);
+
+backdrop-filter:blur(20px);
+
+border-radius:35px;
+
+box-shadow:0 15px 35px rgba(0,0,0,.05);
+
+}
+
+.emptyIcon{
+
+font-size:70px;
+
+margin-bottom:25px;
+
+animation:bounce 2.5s infinite;
+
+}
+
+.emptyBox h2{
+
+font-size:30px;
+
+color:#5D5257;
+
+margin-bottom:15px;
+
+}
+
+.emptyBox p{
+
+font-size:15px;
+
+color:#8D8288;
+
+}
+
+
+
+@keyframes bounce{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+
+
+/* =====================
+Dream Card
+===================== */
+
+.dreamCard{
+
+background:rgba(255,255,255,.72);
+
+backdrop-filter:blur(20px);
+
+border-radius:28px;
+
+padding:18px;
+
+cursor:pointer;
+
+transition:.35s;
+
+box-shadow:0 12px 28px rgba(0,0,0,.06);
+
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
+
+}
+
+.dreamCard:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 20px 45px rgba(255,180,210,.18);
+
+}
+/* =====================
+Dream Card Image
+===================== */
+
+.dreamImage{
+
+width:100%;
+
+height:320px;
+
+border-radius:22px;
+
+overflow:hidden;
+
+background:#F8F8F8;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+position:relative;
+
+}
+
+.cardImage{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+transition:.5s;
+
+}
+
+.dreamCard:hover .cardImage{
+
+transform:scale(1.06);
+
+}
+
+
+
+/* =====================
+Card Info
+===================== */
+
+.dreamInfo{
+
+display:flex;
+
+flex-direction:column;
+
+gap:8px;
+
+padding:5px;
+
+}
+
+.cardTitle{
+
+font-size:24px;
+
+font-weight:bold;
+
+color:#5E5258;
+
+}
+
+.cardDay{
+
+font-size:15px;
+
+font-weight:bold;
+
+color:#E38BAE;
+
+}
+
+.cardIntro{
+
+font-size:14px;
+
+line-height:1.6;
+
+color:#8A8085;
+
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
+overflow:hidden;
+
+}
+
+
+
+/* =====================
+Modal
+===================== */
+
+.modal{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.18);
+
+backdrop-filter:blur(8px);
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+padding:25px;
+
+z-index:999;
+
+animation:fade .35s;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+}
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+.modalBox{
+
+width:100%;
+
+max-width:560px;
+
+background:rgba(255,255,255,.82);
+
+backdrop-filter:blur(25px);
+
+border-radius:32px;
+
+padding:35px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+box-shadow:0 25px 60px rgba(0,0,0,.10);
+
+}
+
+.modalBox h2{
+
+text-align:center;
+
+font-size:28px;
+
+color:#5A4F56;
+
+}
+
+
+
+/* =====================
+Preview
+===================== */
+
+.imageArea{
+
+display:flex;
+
+justify-content:center;
+
+}
+
+#previewImage{
+
+width:220px;
+
+height:220px;
+
+border-radius:22px;
+
+background:#FFF;
+
+border:2px dashed #F2C8DA;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+cursor:pointer;
+
+font-size:15px;
+
+color:#AA909A;
+
+background-size:cover;
+
+background-position:center;
+
+transition:.3s;
+
+overflow:hidden;
+
+}
+
+#previewImage:hover{
+
+transform:scale(1.03);
+
+border-color:#EAA7C4;
+
+}
+
+
+
+/* =====================
+Modal Input
+===================== */
+
+.modalBox input,
+
+.modalBox textarea{
+
+width:100%;
+
+border:none;
+
+outline:none;
+
+border-radius:18px;
+
+padding:16px 18px;
+
+font-size:15px;
+
+background:#FFF;
+
+box-shadow:0 5px 15px rgba(0,0,0,.05);
+
+color:#555;
+
+}
+
+.modalBox textarea{
+
+resize:none;
+
+height:130px;
+
+line-height:1.7;
+
+}
+/* =====================
+Modal Buttons
+===================== */
+
+.modalButtons{
+
+display:flex;
+
+gap:15px;
+
+margin-top:10px;
+
+}
+
+.modalButtons button{
+
+flex:1;
+
+height:55px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-size:16px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+#closeModal{
+
+background:#F2F2F2;
+
+color:#666;
+
+}
+
+#closeModal:hover{
+
+background:#E8E8E8;
+
+transform:translateY(-2px);
+
+}
+
+#saveDream{
+
+background:linear-gradient(
+135deg,
+#FFD6E5,
+#FFE9BF
+);
+
+color:#5E5056;
+
+box-shadow:0 10px 20px rgba(255,180,210,.25);
+
+}
+
+#saveDream:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 15px 30px rgba(255,180,210,.35);
+
+}
+
+
+
+/* =====================
+Setting Modal
+===================== */
+
+.settingBox{
+
+max-width:430px;
+
+}
+
+.settingBox button{
+
+height:54px;
+
+margin-top:10px;
+
+border:none;
+
+border-radius:18px;
+
+cursor:pointer;
+
+font-size:15px;
+
+background:white;
+
+color:#666;
+
+box-shadow:0 8px 18px rgba(0,0,0,.05);
+
+transition:.3s;
+
+}
+
+.settingBox button:hover{
+
+transform:translateY(-3px);
+
+background:#FFF3F8;
+
+}
+
+
+
+/* =====================
+Loading
+===================== */
+
+#loadingScreen{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(255,255,255,.82);
+
+backdrop-filter:blur(15px);
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:99999;
+
+}
+
+.loadingCard{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:18px;
+
+}
+
+.loadingCircle{
+
+width:70px;
+
+height:70px;
+
+border-radius:50%;
+
+border:6px solid #FFE0EB;
+
+border-top-color:#E69BB8;
+
+animation:spin 1s linear infinite;
+
+}
+
+.loadingCard h2{
+
+font-size:28px;
+
+color:#5D5157;
+
+}
+
+.loadingCard p{
+
+font-size:15px;
+
+color:#999;
+
+}
+
+@keyframes spin{
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+
+
+/* =====================
+Toast
+===================== */
+
+#toast{
+
+position:fixed;
+
+left:50%;
+
+bottom:-80px;
+
+transform:translateX(-50%);
+
+background:white;
+
+padding:15px 30px;
+
+border-radius:18px;
+
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+transition:.4s;
+
+z-index:9999;
+
+font-size:15px;
+
+}
+
+#toast.show{
+
+bottom:35px;
+
+}
+
+
+
+/* =====================
+Floating
+===================== */
+
+.floating{
+
+position:fixed;
+
+font-size:30px;
+
+pointer-events:none;
+
+opacity:.25;
+
+animation:floating 8s ease-in-out infinite;
+
+}
+
+.delay1{
+
+left:12%;
+
+bottom:12%;
+
+animation-delay:2s;
+
+}
+
+.delay2{
+
+right:8%;
+
+top:18%;
+
+animation-delay:4s;
+
+}
+
+@keyframes floating{
+
+0%{
+
+transform:translateY(0px) rotate(0deg);
+
+}
+
+50%{
+
+transform:translateY(-20px) rotate(8deg);
+
+}
+
+100%{
+
+transform:translateY(0px) rotate(0deg);
+
+}
+
+}
+/* =====================
+Input Animation
+===================== */
+
+input,
+textarea{
+
+transition:.3s;
+
+}
+
+input:focus,
+textarea:focus{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 12px 28px
+rgba(255,180,210,.25);
+
+}
+
+
+
+/* =====================
+Card Animation
+===================== */
+
+.dreamCard{
+
+animation:cardShow .5s ease;
+
+}
+
+@keyframes cardShow{
+
+0%{
+
+opacity:0;
+
+transform:translateY(25px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+
+
+/* =====================
+Image Hover
+===================== */
+
+.dreamImage::after{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+width:100%;
+
+height:100%;
+
+background:linear-gradient(
+
+180deg,
+
+transparent,
+
+rgba(0,0,0,.12)
+
+);
+
+opacity:0;
+
+transition:.35s;
+
+}
+
+.dreamCard:hover .dreamImage::after{
+
+opacity:1;
+
+}
+
+
+
+/* =====================
+Scrollbar
+===================== */
+
+::-webkit-scrollbar{
+
+width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#FFF8FB;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#F6C7DB;
+
+border-radius:50px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+background:#EAA9C5;
+
+}
+
+
+
+/* =====================
+Selection
+===================== */
+
+::selection{
+
+background:#FFD4E6;
+
+color:#444;
+
+}
+
+
+
+/* =====================
+Placeholder
+===================== */
+
+::placeholder{
+
+color:#B7A7AF;
+
+}
+
+
+
+/* =====================
+Button Click
+===================== */
+
+button:active{
+
+transform:scale(.96);
+
+}
+
+
+
+/* =====================
+Image
+===================== */
+
+img{
+
+user-select:none;
+
+-webkit-user-drag:none;
+
+}
+
+
+
+/* =====================
+Responsive
+===================== */
+
+@media(max-width:900px){
+
+header{
+
+padding:25px;
+
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.logo{
+
+text-align:center;
+
+}
+
+.logo h1{
+
+font-size:34px;
+
+}
+
+#dreamList{
+
+grid-template-columns:1fr;
+
+padding:20px;
+
+}
+
+.searchSection{
+
+padding:20px;
+
+}
+
+.topButtons{
+
+padding:5px 20px 30px;
+
+}
+
+.modalBox{
+
+padding:25px;
+
+}
+
+#previewImage{
+
+width:180px;
+
+height:180px;
+
+}
+
+}
+
+
+
+/* =====================
+Phone
+===================== */
+
+@media(max-width:600px){
+
+.logo h1{
+
+font-size:28px;
+
+}
+
+.logo p{
+
+font-size:13px;
+
+}
+
+#searchInput{
+
+height:52px;
+
+font-size:14px;
+
+}
+
+#createDream{
+
+width:100%;
+
+}
+
+.modalButtons{
+
+flex-direction:column;
+
+}
+
+.modalButtons button{
+
+width:100%;
+
+}
+
+.cardTitle{
+
+font-size:20px;
+
+}
+
+.cardIntro{
+
+font-size:13px;
+
+}
+
+.dreamImage{
+
+height:260px;
+
+}
+
+}
+/* =====================
+Snow Effect
+===================== */
+
+.stars{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+pointer-events:none;
+
+overflow:hidden;
+
+z-index:-5;
+
+}
+
+.stars::before,
+.stars::after{
+
+content:"";
+
+position:absolute;
+
+left:0;
+top:-120%;
+
+width:200%;
+height:250%;
+
+background-image:
+
+radial-gradient(circle,#ffffff 1px,transparent 1.6px),
+radial-gradient(circle,#ffeaf4 1.4px,transparent 2px),
+radial-gradient(circle,#fff9d9 1.3px,transparent 2px);
+
+background-size:
+
+180px 180px,
+260px 260px,
+340px 340px;
+
+opacity:.55;
+
+animation:snowFall 35s linear infinite;
+
+}
+
+.stars::after{
+
+opacity:.35;
+
+animation-duration:55s;
+
+animation-direction:reverse;
+
+}
+
+@keyframes snowFall{
+
+0%{
+
+transform:translateY(-20%);
+
+}
+
+100%{
+
+transform:translateY(45%);
+
+}
+
+}
+
+
+
+/* =====================
+Glass Shine
+===================== */
+
+.dreamCard,
+.modalBox,
+.loginCard{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.dreamCard::before,
+.modalBox::before{
+
+content:"";
+
+position:absolute;
+
+left:-130%;
+
+top:0;
+
+width:70%;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.45),
+
+transparent
+
+);
+
+transform:skewX(-25deg);
+
+transition:1s;
+
+}
+
+.dreamCard:hover::before,
+.modalBox:hover::before{
+
+left:170%;
+
+}
+
+
+
+/* =====================
+Button Glow
+===================== */
+
+button{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+button::after{
+
+content:"";
+
+position:absolute;
+
+left:50%;
+
+top:50%;
+
+width:0;
+
+height:0;
+
+border-radius:50%;
+
+background:rgba(255,255,255,.35);
+
+transform:translate(-50%,-50%);
+
+transition:.45s;
+
+}
+
+button:hover::after{
+
+width:250px;
+
+height:250px;
+
+}
+
+
+
+/* =====================
+Fade Up
+===================== */
+
+.fadeUp{
+
+animation:fadeUp .8s ease;
+
+}
+
+@keyframes fadeUp{
+
+0%{
+
+opacity:0;
+
+transform:translateY(30px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+
+
+/* =====================
+Floating Card
+===================== */
+
+.dreamCard{
+
+animation:
+
+cardShow .5s ease,
+
+floatingCard 6s ease-in-out infinite;
+
+}
+
+@keyframes floatingCard{
+
+0%{
+
+transform:translateY(0px);
+
+}
+
+50%{
+
+transform:translateY(-5px);
+
+}
+
+100%{
+
+transform:translateY(0px);
+
+}
+
+}
+
+
+
+/* =====================
+Gradient Text
+===================== */
+
+.logo h1{
+
+background:linear-gradient(
+
+135deg,
+
+#d08aa7,
+
+#bfa2ff,
+
+#f2b982
+
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+
+
+/* =====================
+Footer Space
+===================== */
+
+body::after{
+
+content:"";
+
+display:block;
+
+height:80px;
+
+}
+
+
+
+/* =====================
+Smooth Transition
+===================== */
+
+*{
+
+transition:
+
+background-color .25s,
+
+color .25s,
+
+border-color .25s,
+
+box-shadow .25s;
+
+}
