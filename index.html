@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dream Archive</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- Background -->
+
+<div class="bg">
+    <div class="blur b1"></div>
+    <div class="blur b2"></div>
+    <div class="blur b3"></div>
+
+    <div class="stars"></div>
+</div>
+
+<!-- Header -->
+
+<header>
+
+<div class="logo">
+
+<h1>Dream Archive</h1>
+
+<p>
+모든 추억을 기록하는 작은 공간
+</p>
+
+</div>
+
+<div class="headerRight">
+
+<button id="settingBtn">
+
+⚙️
+
+</button>
+
+</div>
+
+</header>
+
+<!-- Search -->
+
+<section class="searchSection">
+
+<input
+type="text"
+id="searchInput"
+placeholder="🔍 드림 검색">
+
+</section>
+
+<!-- Top Buttons -->
+
+<section class="topButtons">
+
+<button id="createDream">
+
+＋ 새 드림 만들기
+
+</button>
+
+</section>
+
+<!-- Dream List -->
+
+<main id="dreamList">
+
+<div class="emptyBox">
+
+<div class="emptyIcon">
+
+☁️
+
+</div>
+
+<h2>
+
+아직 등록된 드림이 없습니다.
+
+</h2>
+
+<p>
+
+첫 번째 드림을 만들어보세요.
+
+</p>
+
+</div>
+
+</main>
+
+<!-- ========================= -->
+<!-- 새 드림 만들기 -->
+<!-- ========================= -->
+
+<div id="createModal" class="modal">
+
+<div class="modalBox">
+
+<h2>
+
+새 드림 만들기
+
+</h2>
+
+<div class="imageArea">
+
+<label for="dreamImage">
+
+<div id="previewImage">
+
+사진 추가
+
+</div>
+
+</label>
+
+<input
+type="file"
+id="dreamImage"
+accept="image/*"
+hidden>
+
+</div>
+
+<input
+type="text"
+id="dreamName"
+placeholder="드림 이름">
+
+<input
+type="date"
+id="dreamDate">
+
+<textarea
+
+id="dreamIntro"
+
+placeholder="한 줄 소개">
+
+</textarea>
+
+<div class="modalButtons">
+
+<button id="closeModal">
+
+취소
+
+</button>
+
+<button id="saveDream">
+
+만들기
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+<!-- ========================= -->
+<!-- 설정 모달 -->
+<!-- ========================= -->
+
+<div id="settingModal" class="modal">
+
+<div class="modalBox settingBox">
+
+<h2>
+
+설정
+
+</h2>
+
+<button id="profileBtn">
+
+👤 프로필
+
+</button>
+
+<button id="backupBtn">
+
+💾 JSON 백업
+
+</button>
+
+<button id="restoreBtn">
+
+📂 JSON 복원
+
+</button>
+
+<input
+type="file"
+id="restoreFile"
+accept=".json"
+hidden>
+
+<button id="logoutBtn">
+
+🚪 로그아웃
+
+</button>
+
+<button id="closeSetting">
+
+닫기
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+<!-- 로딩 -->
+<!-- ========================= -->
+
+<div id="loadingScreen">
+
+<div class="loadingCard">
+
+<div class="loadingCircle"></div>
+
+<h2>
+
+Dream Archive
+
+</h2>
+
+<p>
+
+Loading...
+
+</p>
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+<!-- Toast -->
+<!-- ========================= -->
+
+<div id="toast">
+
+저장되었습니다.
+
+</div>
+
+<!-- ========================= -->
+<!-- Template -->
+<!-- ========================= -->
+
+<template id="dreamCardTemplate">
+
+<div class="dreamCard">
+
+<div class="dreamImage">
+
+<img src="" class="cardImage">
+
+</div>
+
+<div class="dreamInfo">
+
+<h2 class="cardTitle">
+
+Dream Name
+
+</h2>
+
+<p class="cardDay">
+
+D+000
+
+</p>
+
+<p class="cardIntro">
+
+소개
+
+</p>
+
+</div>
+
+</div>
+
+</template>
+
+<!-- ========================= -->
+<!-- Floating -->
+<!-- ========================= -->
+
+<div class="floating">
+
+🌸
+
+</div>
+
+<div class="floating delay1">
+
+☁️
+
+</div>
+
+<div class="floating delay2">
+
+✨
+
+</div>
+
+<!-- ========================= -->
+<!-- Script -->
+<!-- ========================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>
