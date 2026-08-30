@@ -14,11 +14,19 @@ let selectedImage = null;
 
 window.addEventListener("DOMContentLoaded", async () => {
 
+    alert("1");
+
     await checkLogin();
+
+    alert("2");
 
     bindEvents();
 
+    alert("3");
+
     await loadDreams();
+
+    alert("4");
 
 });
 
