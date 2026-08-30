@@ -63,6 +63,8 @@ function bindEvents() {
 
 async function logout() {
 
+    alert("로그아웃 함수 실행");
+
     const ok = confirm("로그아웃 하시겠습니까?");
 
     if (!ok) return;
@@ -226,6 +228,8 @@ function getDDay(date) {
 // -------------------------
 
 function openModal() {
+
+    alert("모달 열기");
 
     document.getElementById("createModal").style.display = "flex";
 
