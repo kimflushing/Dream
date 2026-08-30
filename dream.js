@@ -1,1495 +1,1025 @@
-// ==========================================
-// Dream Archive v3
-// ==========================================
+// =========================
+// Dream Archive
+// dream.js (1/6)
+// =========================
 
-"use strict";
+const params = new URLSearchParams(location.search);
+const dreamId = params.get("id");
 
-// ==========================================
-// Shortcut
-// ==========================================
+let user = null;
+let dream = null;
 
-const $ = (e) => document.querySelector(e);
-const $$ = (e) => document.querySelectorAll(e);
+// -------------------------
+// 시작
+// -------------------------
 
-// ==========================================
-// Supabase
-// ==========================================
+window.addEventListener("DOMContentLoaded", async () => {
 
-const db = window.supabaseClient || null;
+    await checkLogin();
 
-// ==========================================
-// LocalStorage
-// ==========================================
+    await loadDream();
 
-const STORAGE_KEY = "DreamArchive_v3";
+    bindTabs();
 
-// ==========================================
-// Elements
-// ==========================================
-
-const tabs = $$(".tab");
-const pages = $$(".tabContent");
-
-const preview = $("#previewImage");
-const imageInput = $("#mainImage");
-
-const saveBtn = $("#saveBtn");
-const backBtn = $("#backBtn");
-
-const toast = $("#toast");
-
-const viewer = $("#imageViewer");
-const viewerImage = $("#viewerImage");
-const closeViewer = $("#closeViewer");
-
-const loading = $("#loadingScreen");
-
-const settingModal = $("#settingModal");
-const settingBtn = $("#settingBtn");
-const closeSetting = $("#closeSetting");
-
-const startDate = $("#startDate");
-const dday = $("#dday");
-
-// ==========================================
-// Toast
-// ==========================================
-
-let toastTimer = null;
-
-function toastMessage(text){
-
-    if(!toast) return;
-
-    toast.textContent = text;
-
-    toast.classList.add("show");
-
-    clearTimeout(toastTimer);
-
-    toastTimer = setTimeout(()=>{
-
-        toast.classList.remove("show");
-
-    },1800);
-
-}
-
-// ==========================================
-// Loading
-// ==========================================
-
-function loadingOn(){
-
-    if(loading){
-
-        loading.classList.add("show");
-
-    }
-
-}
-
-function loadingOff(){
-
-    if(loading){
-
-        loading.classList.remove("show");
-
-    }
-
-}
-
-// ==========================================
-// Tab
-// ==========================================
-
-tabs.forEach(tab=>{
-
-    tab.addEventListener("click",()=>{
-
-        tabs.forEach(t=>t.classList.remove("active"));
-
-        pages.forEach(p=>p.classList.remove("active"));
-
-        tab.classList.add("active");
-
-        const page=$("#"+tab.dataset.tab);
-
-        if(page){
-
-            page.classList.add("active");
-
-        }
-
-    });
+    bindButtons();
 
 });
 
-// ==========================================
-// D-Day
-// ==========================================
+// -------------------------
+// 로그인 확인
+// -------------------------
 
-function updateDday(){
+async function checkLogin() {
 
-    if(!startDate || !dday) return;
+    const { data } = await supabase.auth.getUser();
 
-    if(!startDate.value){
+    if (!data.user) {
 
-        dday.textContent="D+0";
+        location.href = "login.html";
+        return;
+
+    }
+
+    user = data.user;
+
+}
+
+// -------------------------
+// 버튼 이벤트
+// -------------------------
+
+function bindButtons() {
+
+    document.getElementById("backBtn").onclick = () => {
+
+        location.href = "index.html";
+
+    };
+
+    document.getElementById("saveBtn").onclick = saveDream;
+
+    document.getElementById("changeImage").onclick = () => {
+
+        document.getElementById("mainImage").click();
+
+    };
+
+    document.getElementById("mainImage").onchange = previewImage;
+
+}
+
+// -------------------------
+// 탭
+// -------------------------
+
+function bindTabs() {
+
+    const tabs = document.querySelectorAll(".tab");
+
+    const contents = document.querySelectorAll(".tabContent");
+
+    tabs.forEach(tab => {
+
+        tab.onclick = () => {
+
+            tabs.forEach(t => t.classList.remove("active"));
+
+            contents.forEach(c => c.classList.remove("active"));
+
+            tab.classList.add("active");
+
+            document
+                .getElementById(tab.dataset.tab)
+                .classList.add("active");
+
+        };
+
+    });
+
+}
+
+// -------------------------
+// 드림 불러오기
+// -------------------------
+
+async function loadDream() {
+
+    const { data, error } = await supabase
+
+        .from("dreams")
+
+        .select("*")
+
+        .eq("id", dreamId)
+
+        .single();
+
+    if (error) {
+
+        alert(error.message);
+
+        location.href = "index.html";
 
         return;
 
     }
 
-    const start=new Date(startDate.value);
+    dream = data;
 
-    const today=new Date();
+    fillData();
 
-    start.setHours(0,0,0,0);
+}
 
-    today.setHours(0,0,0,0);
+// -------------------------
+// 화면 채우기
+// -------------------------
 
-    const diff=Math.floor(
+function fillData() {
 
-        (today-start)/(1000*60*60*24)
+    document.title = dream.name;
+
+    document.getElementById("dreamTitle").textContent = dream.name;
+
+    document.getElementById("dreamName").value = dream.name || "";
+
+    document.getElementById("intro").value = dream.intro || "";
+
+    document.getElementById("startDate").value =
+        dream.start_date || "";
+
+    document.getElementById("previewImage").src =
+        dream.image || "default.png";
+
+    updateDDay();
+
+}
+
+// -------------------------
+// D-Day
+// -------------------------
+
+function updateDDay() {
+
+    const value =
+        document.getElementById("startDate").value;
+
+    if (!value) {
+
+        document.getElementById("dday").textContent =
+            "D+0";
+
+        return;
+
+    }
+
+    const start = new Date(value);
+
+    const today = new Date();
+
+    const diff = Math.floor(
+
+        (today - start) /
+
+        (1000 * 60 * 60 * 24)
 
     );
 
-    dday.textContent=
-
-        diff>=0 ? `D+${diff}` : `D${diff}`;
-
-}
-
-if(startDate){
-
-    startDate.addEventListener("change",updateDday);
+    document.getElementById("dday").textContent =
+        `D+${diff}`;
 
 }
 
-// ==========================================
-// Cover Image
-// ==========================================
+document
+.getElementById("startDate")
+.addEventListener("change", updateDDay);
+// =========================
+// dream.js (2/6)
+// 이미지 / 저장
+// =========================
 
-if(imageInput){
+let selectedImage = null;
 
-imageInput.addEventListener("change",()=>{
+// -------------------------
+// 이미지 미리보기
+// -------------------------
 
-    const file=imageInput.files[0];
+function previewImage(e){
+
+    const file = e.target.files[0];
 
     if(!file) return;
 
-    const reader=new FileReader();
+    selectedImage = file;
 
-    reader.onload=e=>{
+    const reader = new FileReader();
 
-        preview.src=e.target.result;
+    reader.onload = function(){
 
-        autoSave();
+        document.getElementById("previewImage").src =
+            reader.result;
 
     };
 
     reader.readAsDataURL(file);
 
-});
-
 }
 
-// ==========================================
-// Viewer
-// ==========================================
+// -------------------------
+// Storage 업로드
+// -------------------------
 
-if(preview){
+async function uploadImage(file){
 
-preview.addEventListener("click",()=>{
+    if(!file){
 
-    viewer.classList.add("show");
-
-    viewerImage.src=preview.src;
-
-});
-
-}
-
-if(closeViewer){
-
-closeViewer.onclick=()=>{
-
-    viewer.classList.remove("show");
-
-};
-
-}
-
-if(viewer){
-
-viewer.onclick=e=>{
-
-    if(e.target===viewer){
-
-        viewer.classList.remove("show");
+        return dream.image;
 
     }
 
-};
+    const fileName =
+        `${user.id}/${Date.now()}_${file.name}`;
+
+    const { error } = await supabase.storage
+
+        .from("dream-image")
+
+        .upload(fileName,file);
+
+    if(error){
+
+        alert(error.message);
+
+        return dream.image;
+
+    }
+
+    const { data } = supabase.storage
+
+        .from("dream-image")
+
+        .getPublicUrl(fileName);
+
+    return data.publicUrl;
 
 }
 
-// ==========================================
-// Header Buttons
-// ==========================================
+// -------------------------
+// 저장
+// -------------------------
 
-if(backBtn){
+async function saveDream(){
 
-backBtn.onclick=()=>{
+    showLoading();
+
+    const imageUrl =
+        await uploadImage(selectedImage);
+
+    const updateData = {
+
+        name:
+        document.getElementById("dreamName").value,
+
+        intro:
+        document.getElementById("intro").value,
+
+        start_date:
+        document.getElementById("startDate").value,
+
+        image:imageUrl,
+
+        character_name:
+        document.getElementById("characterName").value,
+
+        height:
+        document.getElementById("height").value,
+
+        birthday:
+        document.getElementById("birthday").value,
+
+        age:
+        document.getElementById("age").value,
+
+        mbti:
+        document.getElementById("mbti").value,
+
+        job:
+        document.getElementById("job").value,
+
+        appearance:
+        document.getElementById("appearanceText").value,
+
+        world_name:
+        document.getElementById("worldName").value,
+
+        group_name:
+        document.getElementById("group").value,
+
+        ability:
+        document.getElementById("ability").value,
+
+        setting_text:
+        document.getElementById("settingText").value,
+
+        story:
+        document.getElementById("storyText").value
+
+    };
+
+    const { error } = await supabase
+
+        .from("dreams")
+
+        .update(updateData)
+
+        .eq("id",dreamId)
+
+        .eq("user_id",user.id);
+
+    hideLoading();
+
+    if(error){
+
+        alert(error.message);
+
+        return;
+
+    }
+
+    toast("저장되었습니다.");
+
+    dream = {
+
+        ...dream,
+
+        ...updateData
+
+    };
+
+}
+// =========================
+// dream.js (3/6)
+// 관계 / AU / 커미션
+// =========================
+
+// -------------------------
+// 버튼 연결
+// -------------------------
+
+document.getElementById("addRelation").onclick = addRelation;
+
+document.getElementById("addAU").onclick = addAU;
+
+document.getElementById("addCommission").onclick = addCommission;
+
+// -------------------------
+// 관계 추가
+// -------------------------
+
+function addRelation(){
+
+    const card = document.createElement("div");
+
+    card.className = "relationCard";
+
+    card.innerHTML = `
+
+<input class="relationName" placeholder="캐릭터 이름">
+
+<input class="relationType" placeholder="관계">
+
+<textarea class="relationMemo"
+placeholder="설명"></textarea>
+
+<button class="deleteRelation">
+삭제
+</button>
+
+`;
+
+    card.querySelector(".deleteRelation").onclick=()=>{
+
+        card.remove();
+
+    };
+
+    document
+        .getElementById("relationList")
+        .appendChild(card);
+
+}
+
+// -------------------------
+// AU 추가
+// -------------------------
+
+function addAU(){
+
+    const card=document.createElement("div");
+
+    card.className="auCard";
+
+    card.innerHTML=`
+
+<input class="auTitle"
+placeholder="AU 이름">
+
+<input class="auWorld"
+placeholder="세계관">
+
+<textarea class="auDescription"
+placeholder="설명"></textarea>
+
+<button class="deleteAU">
+
+삭제
+
+</button>
+
+`;
+
+    card.querySelector(".deleteAU").onclick=()=>{
+
+        card.remove();
+
+    };
+
+    document
+        .getElementById("auList")
+        .appendChild(card);
+
+}
+
+// -------------------------
+// 커미션 추가
+// -------------------------
+
+function addCommission(){
+
+    const card=document.createElement("div");
+
+    card.className="commissionCard";
+
+    card.innerHTML=`
+
+<input class="artistName"
+placeholder="작가">
+
+<input class="commissionLink"
+placeholder="링크">
+
+<textarea class="commissionMemo"
+placeholder="메모"></textarea>
+
+<button class="deleteCommission">
+
+삭제
+
+</button>
+
+`;
+
+    card.querySelector(".deleteCommission").onclick=()=>{
+
+        card.remove();
+
+    };
+
+    document
+        .getElementById("commissionList")
+        .appendChild(card);
+
+}
+
+// -------------------------
+// 삭제
+// -------------------------
+
+document
+.getElementById("deleteDream")
+.onclick = async ()=>{
+
+    const ok=confirm("이 드림을 삭제하시겠습니까?");
+
+    if(!ok) return;
+
+    showLoading();
+
+    const { error } = await supabase
+
+        .from("dreams")
+
+        .delete()
+
+        .eq("id",dreamId)
+
+        .eq("user_id",user.id);
+
+    hideLoading();
+
+    if(error){
+
+        alert(error.message);
+
+        return;
+
+    }
+
+    alert("삭제되었습니다.");
 
     location.href="index.html";
 
 };
+// =========================
+// dream.js (4/6)
+// Viewer / JSON / Auto Save
+// =========================
 
-}
+// -------------------------
+// 이미지 확대
+// -------------------------
 
-if(settingBtn){
+const viewer = document.getElementById("imageViewer");
+const viewerImage = document.getElementById("viewerImage");
 
-settingBtn.onclick=()=>{
+document.getElementById("previewImage").onclick = () => {
 
-    settingModal.classList.add("show");
+    viewer.style.display = "flex";
+
+    viewerImage.src =
+        document.getElementById("previewImage").src;
 
 };
 
-}
+document.getElementById("closeViewer").onclick = () => {
 
-if(closeSetting){
-
-closeSetting.onclick=()=>{
-
-    settingModal.classList.remove("show");
+    viewer.style.display = "none";
 
 };
 
-}
+viewer.onclick = (e) => {
 
-if(settingModal){
+    if (e.target === viewer) {
 
-settingModal.onclick=e=>{
-
-    if(e.target===settingModal){
-
-        settingModal.classList.remove("show");
+        viewer.style.display = "none";
 
     }
 
 };
 
-}
-// ==========================================
-// Collect Data
-// ==========================================
+// -------------------------
+// JSON 백업
+// -------------------------
 
-function collectData(){
+document.getElementById("exportJSON").onclick = () => {
 
-    return{
+    const data = {
 
-        archiveType:$("#archiveType")?.value||"",
+        ...dream,
 
-        dreamName:$("#dreamName")?.value||"",
-
-        startDate:$("#startDate")?.value||"",
-
-        intro:$("#intro")?.value||"",
-
-        characterName:$("#characterName")?.value||"",
-
-        height:$("#height")?.value||"",
-
-        birthday:$("#birthday")?.value||"",
-
-        age:$("#age")?.value||"",
-
-        mbti:$("#mbti")?.value||"",
-
-        job:$("#job")?.value||"",
-
-        appearanceText:$("#appearanceText")?.value||"",
-
-        worldName:$("#worldName")?.value||"",
-
-        group:$("#group")?.value||"",
-
-        ability:$("#ability")?.value||"",
-
-        settingText:$("#settingText")?.value||"",
-
-        storyText:$("#storyText")?.value||"",
-
-        cover:preview ? preview.src : ""
+        saved_at: new Date().toLocaleString()
 
     };
 
-}
+    const blob = new Blob(
 
-// ==========================================
-// Apply Data
-// ==========================================
-
-function applyData(data){
-
-    if(!data) return;
-
-    Object.keys(data).forEach(key=>{
-
-        const el=document.getElementById(key);
-
-        if(el){
-
-            el.value=data[key];
-
-        }
-
-    });
-
-    if(data.cover && preview){
-
-        preview.src=data.cover;
-
-    }
-
-    updateDday();
-
-}
-
-// ==========================================
-// Local Save
-// ==========================================
-
-function saveLocal(){
-
-    localStorage.setItem(
-
-        STORAGE_KEY,
-
-        JSON.stringify(
-
-            collectData()
-
-        )
-
-    );
-
-    const time=$("#lastSaveTime");
-
-    if(time){
-
-        time.textContent=
-
-        new Date().toLocaleString("ko-KR");
-
-    }
-
-}
-
-// ==========================================
-// Local Load
-// ==========================================
-
-function loadLocal(){
-
-    const raw=
-
-    localStorage.getItem(STORAGE_KEY);
-
-    if(!raw) return;
-
-    try{
-
-        applyData(
-
-            JSON.parse(raw)
-
-        );
-
-    }catch(e){
-
-        console.error(e);
-
-    }
-
-}
-
-// ==========================================
-// Cloud Save
-// ==========================================
-
-async function saveCloud(){
-
-    if(!db) return;
-
-    try{
-
-        await db
-
-        .from("archives")
-
-        .upsert([{
-
-            id:1,
-
-            data:collectData(),
-
-            updated_at:
-
-            new Date()
-
-            .toISOString()
-
-        }]);
-
-    }
-
-    catch(err){
-
-        console.error(err);
-
-    }
-
-}
-
-// ==========================================
-// Cloud Load
-// ==========================================
-
-async function loadCloud(){
-
-    if(!db) return;
-
-    loadingOn();
-
-    try{
-
-        const{
-
-            data,
-
-            error
-
-        }=
-
-        await db
-
-        .from("archives")
-
-        .select("*")
-
-        .eq("id",1)
-
-        .single();
-
-        if(!error && data){
-
-            applyData(data.data);
-
-        }
-
-    }
-
-    catch(err){
-
-        console.error(err);
-
-    }
-
-    loadingOff();
-
-}
-
-// ==========================================
-// Auto Save
-// ==========================================
-
-function autoSave(){
-
-    saveLocal();
-
-    saveCloud();
-
-    toastMessage("자동 저장");
-
-}
-
-// ==========================================
-// Inputs
-// ==========================================
-
-document
-
-.querySelectorAll(
-
-"input,textarea,select"
-
-)
-
-.forEach(el=>{
-
-    el.addEventListener(
-
-        "input",
-
-        autoSave
-
-    );
-
-    el.addEventListener(
-
-        "change",
-
-        autoSave
-
-    );
-
-});
-
-// ==========================================
-// Save Button
-// ==========================================
-
-if(saveBtn){
-
-saveBtn.onclick=()=>{
-
-    autoSave();
-
-};
-
-}
-// ==========================================
-// Relation
-// ==========================================
-
-const relationList=$("#relationList");
-const relationTemplate=$("#relationTemplate");
-
-if($("#addRelation")){
-
-$("#addRelation").onclick=()=>{
-
-    const node=
-
-    relationTemplate.content.cloneNode(true);
-
-    const card=
-
-    node.querySelector(".relationCard");
-
-    const preview=
-
-    card.querySelector(".relationPreview");
-
-    const photo=
-
-    card.querySelector(".relationPhoto");
-
-    // ----------------------
-    // Image
-    // ----------------------
-
-    preview.onclick=()=>{
-
-        photo.click();
-
-    };
-
-    photo.onchange=()=>{
-
-        const file=photo.files[0];
-
-        if(!file) return;
-
-        const reader=new FileReader();
-
-        reader.onload=e=>{
-
-            preview.src=e.target.result;
-
-            autoSave();
-
-        };
-
-        reader.readAsDataURL(file);
-
-    };
-
-    // ----------------------
-    // Viewer
-    // ----------------------
-
-    preview.addEventListener("click",()=>{
-
-        viewer.classList.add("show");
-
-        viewerImage.src=preview.src;
-
-    });
-
-    // ----------------------
-    // Delete
-    // ----------------------
-
-    card.querySelector(".deleteRelation")
-
-    .onclick=()=>{
-
-        card.remove();
-
-        autoSave();
-
-    };
-
-    // ----------------------
-    // Auto Save
-    // ----------------------
-
-    card.querySelectorAll(
-
-    "input,textarea"
-
-    ).forEach(el=>{
-
-        el.oninput=autoSave;
-
-        el.onchange=autoSave;
-
-    });
-
-    relationList.appendChild(card);
-
-    autoSave();
-
-};
-
-}
-
-// ==========================================
-// Timeline
-// ==========================================
-
-const timelineList=$("#timelineList");
-
-const timelineTemplate=$("#timelineTemplate");
-
-if($("#addTimeline")){
-
-$("#addTimeline").onclick=()=>{
-
-    const node=
-
-    timelineTemplate.content.cloneNode(true);
-
-    const card=
-
-    node.querySelector(".timelineCard");
-
-    card.querySelector(
-
-    ".deleteTimeline"
-
-    ).onclick=()=>{
-
-        card.remove();
-
-        autoSave();
-
-    };
-
-    card.querySelectorAll(
-
-    "input,textarea"
-
-    ).forEach(el=>{
-
-        el.oninput=autoSave;
-
-        el.onchange=autoSave;
-
-    });
-
-    timelineList.appendChild(card);
-
-    autoSave();
-
-};
-
-}
-
-// ==========================================
-// Observe
-// ==========================================
-
-if(relationList){
-
-new MutationObserver(()=>{
-
-    saveLocal();
-
-}).observe(
-
-relationList,
-
-{
-
-childList:true
-
-}
-
-);
-
-}
-
-if(timelineList){
-
-new MutationObserver(()=>{
-
-    saveLocal();
-
-}).observe(
-
-timelineList,
-
-{
-
-childList:true
-
-}
-
-);
-
-}
-
-// ==========================================
-// Relation Viewer
-// ==========================================
-
-document.addEventListener(
-
-"click",
-
-e=>{
-
-if(
-
-e.target.classList.contains(
-
-"relationPreview"
-
-)
-
-){
-
-viewer.classList.add("show");
-
-viewerImage.src=e.target.src;
-
-}
-
-}
-
-);
-// ==========================================
-// AU
-// ==========================================
-
-const auList=$("#auList");
-const auTemplate=$("#auTemplate");
-
-if($("#addAU")){
-
-$("#addAU").onclick=()=>{
-
-    const node=
-    auTemplate.content.cloneNode(true);
-
-    const card=
-    node.querySelector(".auCard");
-
-    const preview=
-    card.querySelector(".auPreview");
-
-    const image=
-    card.querySelector(".auImage");
-
-    const galleryInput=
-    card.querySelector(".auGallery");
-
-    const gallery=
-    card.querySelector(".galleryPreview");
-
-    // ----------------------
-    // Cover
-    // ----------------------
-
-    preview.onclick=()=>{
-
-        image.click();
-
-    };
-
-    image.onchange=()=>{
-
-        const file=image.files[0];
-
-        if(!file) return;
-
-        const reader=new FileReader();
-
-        reader.onload=e=>{
-
-            preview.src=e.target.result;
-
-            autoSave();
-
-            rebuildGallery();
-
-        };
-
-        reader.readAsDataURL(file);
-
-    };
-
-    // ----------------------
-    // Gallery
-    // ----------------------
-
-    galleryInput.onchange=()=>{
-
-        [...galleryInput.files].forEach(file=>{
-
-            const reader=new FileReader();
-
-            reader.onload=e=>{
-
-                const img=document.createElement("img");
-
-                img.src=e.target.result;
-
-                img.onclick=()=>{
-
-                    viewer.classList.add("show");
-
-                    viewerImage.src=img.src;
-
-                };
-
-                gallery.appendChild(img);
-
-                rebuildGallery();
-
-            };
-
-            reader.readAsDataURL(file);
-
-        });
-
-        autoSave();
-
-    };
-
-    // ----------------------
-    // Auto Save
-    // ----------------------
-
-    card.querySelectorAll(
-
-    "input,textarea"
-
-    ).forEach(el=>{
-
-        el.oninput=autoSave;
-
-        el.onchange=autoSave;
-
-    });
-
-    // ----------------------
-    // Delete
-    // ----------------------
-
-    card.querySelector(
-
-    ".deleteAU"
-
-    ).onclick=()=>{
-
-        card.remove();
-
-        rebuildGallery();
-
-        updateAUCount();
-
-        autoSave();
-
-    };
-
-    // ----------------------
-    // Viewer
-    // ----------------------
-
-    preview.addEventListener("click",()=>{
-
-        viewer.classList.add("show");
-
-        viewerImage.src=preview.src;
-
-    });
-
-    auList.appendChild(card);
-
-    updateAUCount();
-
-    autoSave();
-
-};
-
-}
-
-// ==========================================
-// AU Counter
-// ==========================================
-
-function updateAUCount(){
-
-    const stat=$("#statAU");
-
-    if(!stat) return;
-
-    stat.textContent=
-
-    auList
-
-    .querySelectorAll(".auCard")
-
-    .length;
-
-}
-
-if(auList){
-
-new MutationObserver(()=>{
-
-    updateAUCount();
-
-}).observe(
-
-auList,
-
-{
-
-childList:true
-
-}
-
-);
-
-}
-
-updateAUCount();
-// ==========================================
-// Commission
-// ==========================================
-
-const commissionList=$("#commissionList");
-const commissionTemplate=$("#commissionTemplate");
-
-if($("#addCommission")){
-
-$("#addCommission").onclick=()=>{
-
-    const node=
-    commissionTemplate.content.cloneNode(true);
-
-    const card=
-    node.querySelector(".commissionCard");
-
-    const preview=
-    card.querySelector(".commissionPreview");
-
-    const image=
-    card.querySelector(".commissionImage");
-
-    const galleryInput=
-    card.querySelector(".commissionGalleryInput");
-
-    const gallery=
-    card.querySelector(".commissionGalleryPreview");
-
-    // ----------------------
-    // Cover
-    // ----------------------
-
-    preview.onclick=()=>{
-
-        image.click();
-
-    };
-
-    image.onchange=()=>{
-
-        const file=image.files[0];
-
-        if(!file) return;
-
-        const reader=new FileReader();
-
-        reader.onload=e=>{
-
-            preview.src=e.target.result;
-
-            rebuildGallery();
-
-            autoSave();
-
-        };
-
-        reader.readAsDataURL(file);
-
-    };
-
-    // ----------------------
-    // Gallery
-    // ----------------------
-
-    galleryInput.onchange=()=>{
-
-        [...galleryInput.files].forEach(file=>{
-
-            const reader=new FileReader();
-
-            reader.onload=e=>{
-
-                const img=document.createElement("img");
-
-                img.src=e.target.result;
-
-                img.onclick=()=>{
-
-                    viewer.classList.add("show");
-
-                    viewerImage.src=img.src;
-
-                };
-
-                gallery.appendChild(img);
-
-                rebuildGallery();
-
-            };
-
-            reader.readAsDataURL(file);
-
-        });
-
-        autoSave();
-
-    };
-
-    // ----------------------
-    // Auto Save
-    // ----------------------
-
-    card.querySelectorAll(
-        "input,textarea"
-    ).forEach(el=>{
-
-        el.oninput=autoSave;
-
-        el.onchange=autoSave;
-
-    });
-
-    // ----------------------
-    // Delete
-    // ----------------------
-
-    card.querySelector(
-        ".deleteCommission"
-    ).onclick=()=>{
-
-        card.remove();
-
-        rebuildGallery();
-
-        updateCommissionCount();
-
-        autoSave();
-
-    };
-
-    // ----------------------
-    // Viewer
-    // ----------------------
-
-    preview.addEventListener("click",()=>{
-
-        viewer.classList.add("show");
-
-        viewerImage.src=preview.src;
-
-    });
-
-    commissionList.appendChild(card);
-
-    updateCommissionCount();
-
-    autoSave();
-
-};
-
-}
-
-// ==========================================
-// Commission Counter
-// ==========================================
-
-function updateCommissionCount(){
-
-    const stat=$("#statCommission");
-
-    if(!stat) return;
-
-    stat.textContent=
-
-    commissionList
-    .querySelectorAll(".commissionCard")
-    .length;
-
-}
-
-if(commissionList){
-
-new MutationObserver(()=>{
-
-    updateCommissionCount();
-
-}).observe(
-
-commissionList,
-
-{
-
-childList:true
-
-}
-
-);
-
-}
-
-updateCommissionCount();
-// ==========================================
-// JSON Export
-// ==========================================
-
-const exportBtn=$("#exportJSON");
-const importBtn=$("#importJSON");
-const jsonFile=$("#jsonFile");
-
-if(exportBtn){
-
-exportBtn.onclick=()=>{
-
-    const data=collectData();
-
-    const blob=new Blob(
-
-        [JSON.stringify(data,null,2)],
+        [JSON.stringify(data, null, 2)],
 
         {
 
-            type:"application/json"
+            type: "application/json"
 
         }
 
     );
 
-    const url=
+    const url = URL.createObjectURL(blob);
 
-    URL.createObjectURL(blob);
+    const a = document.createElement("a");
 
-    const a=document.createElement("a");
+    a.href = url;
 
-    a.href=url;
-
-    a.download="dream_archive.json";
+    a.download = `${dream.name}.json`;
 
     a.click();
 
     URL.revokeObjectURL(url);
 
-    toastMessage("JSON 백업 완료");
+    toast("JSON 백업 완료");
 
 };
 
-}
+// -------------------------
+// JSON 불러오기
+// -------------------------
 
-// ==========================================
-// JSON Import
-// ==========================================
+document.getElementById("importJSON").onclick = () => {
 
-if(importBtn){
-
-importBtn.onclick=()=>{
-
-    jsonFile.click();
+    document.getElementById("jsonFile").click();
 
 };
 
-}
+document.getElementById("jsonFile").addEventListener(
 
-if(jsonFile){
+    "change",
 
-jsonFile.onchange=e=>{
+    async (e) => {
 
-    const file=e.target.files[0];
+        const file = e.target.files[0];
 
-    if(!file) return;
+        if (!file) return;
 
-    const reader=new FileReader();
+        try {
 
-    reader.onload=x=>{
+            const text = await file.text();
 
-        try{
+            const json = JSON.parse(text);
 
-            const data=
+            dream = {
 
-            JSON.parse(x.target.result);
+                ...dream,
 
-            applyData(data);
+                ...json
 
-            autoSave();
+            };
 
-            rebuildGallery();
+            fillData();
 
-            toastMessage("불러오기 완료");
+            toast("JSON 불러오기 완료");
 
-        }
+        } catch {
 
-        catch(err){
-
-            console.error(err);
-
-            toastMessage("JSON 오류");
+            alert("올바른 JSON 파일이 아닙니다.");
 
         }
 
-    };
-
-    reader.readAsText(file);
-
-};
-
-}
-
-// ==========================================
-// Gallery
-// ==========================================
-
-const galleryGrid=$("#galleryGrid");
-
-function rebuildGallery(){
-
-    if(!galleryGrid) return;
-
-    galleryGrid.innerHTML="";
-
-    // 대표 이미지
-
-    document.querySelectorAll(
-
-    ".relationPreview,.auPreview,.commissionPreview"
-
-    ).forEach(img=>{
-
-        if(
-
-            !img.src ||
-
-            img.src.includes("default.png")
-
-        ){
-
-            return;
-
-        }
-
-        const clone=document.createElement("img");
-
-        clone.src=img.src;
-
-        clone.className="galleryImage";
-
-        clone.onclick=()=>{
-
-            viewer.classList.add("show");
-
-            viewerImage.src=clone.src;
-
-        };
-
-        galleryGrid.appendChild(clone);
-
-    });
-
-    // 갤러리 이미지
-
-    document.querySelectorAll(
-
-    ".galleryPreview img,.commissionGalleryPreview img"
-
-    ).forEach(img=>{
-
-        const clone=document.createElement("img");
-
-        clone.src=img.src;
-
-        clone.className="galleryImage";
-
-        clone.onclick=()=>{
-
-            viewer.classList.add("show");
-
-            viewerImage.src=clone.src;
-
-        };
-
-        galleryGrid.appendChild(clone);
-
-    });
-
-}
-
-// ==========================================
-// Gallery Observer
-// ==========================================
-
-new MutationObserver(()=>{
-
-    rebuildGallery();
-
-}).observe(
-
-document.body,
-
-{
-
-childList:true,
-
-subtree:true
-
-}
+    }
 
 );
 
-rebuildGallery();
-// ==========================================
-// Delete Archive
-// ==========================================
+// -------------------------
+// 자동 저장
+// -------------------------
 
-const deleteArchive = $("#deleteArchive");
+let autoSaveTimer;
 
-if(deleteArchive){
+document.querySelectorAll("input, textarea").forEach(input => {
 
-    deleteArchive.onclick = async () => {
+    input.addEventListener("input", () => {
 
-        if(!confirm("정말 삭제하시겠습니까?")) return;
+        clearTimeout(autoSaveTimer);
 
-        localStorage.removeItem(STORAGE_KEY);
+        autoSaveTimer = setTimeout(() => {
 
-        if(db){
+            saveDream();
 
-            try{
+        }, 1200);
 
-                await db
-                .from("archives")
-                .delete()
-                .eq("id",1);
+    });
 
-            }catch(err){
+});
 
-                console.error(err);
+// -------------------------
+// Ctrl + S 저장
+// -------------------------
 
-            }
+document.addEventListener("keydown", (e) => {
 
-        }
+    if (e.ctrlKey && e.key === "s") {
 
-        location.reload();
+        e.preventDefault();
 
-    };
-
-}
-
-// ==========================================
-// Change Cover
-// ==========================================
-
-const changeCover = $("#changeCover");
-
-if(changeCover){
-
-    changeCover.onclick = () => {
-
-        imageInput.click();
-
-    };
-
-}
-
-// ==========================================
-// ESC Close Viewer
-// ==========================================
-
-document.addEventListener("keydown", e => {
-
-    if (e.key === "Escape") {
-
-        viewer.classList.remove("show");
-        settingModal.classList.remove("show");
+        saveDream();
 
     }
 
 });
 
-// ==========================================
-// Drag & Drop Cover
-// ==========================================
+// -------------------------
+// 설정창 닫기
+// -------------------------
 
-preview.addEventListener("dragover", e => {
+document.getElementById("closeSetting").onclick = () => {
 
-    e.preventDefault();
+    document.getElementById("settingModal").style.display = "none";
+
+};
+
+window.addEventListener("click", (e) => {
+
+    const modal = document.getElementById("settingModal");
+
+    if (e.target === modal) {
+
+        modal.style.display = "none";
+
+    }
+
+});
+// =========================
+// dream.js (5/6)
+// 실시간 / Toast / Loading
+// =========================
+
+// -------------------------
+// 실시간 동기화
+// -------------------------
+
+supabase
+.channel("dream-update")
+.on(
+    "postgres_changes",
+    {
+        event: "*",
+        schema: "public",
+        table: "dreams"
+    },
+    async (payload) => {
+
+        if (payload.new?.id != dreamId) return;
+
+        await loadDream();
+
+        console.log("실시간 업데이트");
+
+    }
+)
+.subscribe();
+
+// -------------------------
+// Toast
+// -------------------------
+
+function toast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+    },2500);
+
+}
+
+// -------------------------
+// Loading
+// -------------------------
+
+function showLoading(){
+
+    document
+    .getElementById("loadingScreen")
+    .style.display="flex";
+
+}
+
+function hideLoading(){
+
+    document
+    .getElementById("loadingScreen")
+    .style.display="none";
+
+}
+
+// -------------------------
+// 마지막 저장 시간
+// -------------------------
+
+function updateSaveTime(){
+
+    const time = new Date();
+
+    const text =
+        time.toLocaleTimeString("ko-KR",{
+
+            hour:"2-digit",
+            minute:"2-digit"
+
+        });
+
+    const target =
+        document.getElementById("lastSaveTime");
+
+    if(target){
+
+        target.textContent=text;
+
+    }
+
+}
+
+// -------------------------
+// 저장 함수 보강
+// -------------------------
+
+const originalSaveDream = saveDream;
+
+saveDream = async function(){
+
+    await originalSaveDream();
+
+    updateSaveTime();
+
+};
+
+// -------------------------
+// 페이지 이탈 확인
+// -------------------------
+
+let changed=false;
+
+document
+.querySelectorAll("input,textarea")
+.forEach(el=>{
+
+    el.addEventListener("input",()=>{
+
+        changed=true;
+
+    });
 
 });
 
-preview.addEventListener("drop", e => {
+window.addEventListener("beforeunload",(e)=>{
+
+    if(!changed) return;
 
     e.preventDefault();
 
-    const file = e.dataTransfer.files[0];
-
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = x => {
-
-        preview.src = x.target.result;
-
-        autoSave();
-
-    };
-
-    reader.readAsDataURL(file);
+    e.returnValue="";
 
 });
 
-// ==========================================
-// Finish
-// ==========================================
+// -------------------------
+// 저장 후 상태 초기화
+// -------------------------
 
-console.log("Dream Archive v3 Loaded");
+function saveCompleted(){
+
+    changed=false;
+
+    updateSaveTime();
+
+}
+
+// -------------------------
+// 시작
+// -------------------------
+
+updateSaveTime();
+
+console.log("Dream Detail Loaded");
+// =========================
+// dream.js (6/6)
+// 최종 마무리
+// =========================
+
+// -------------------------
+// 갤러리 자동 생성
+// -------------------------
+
+function refreshGallery(){
+
+    const gallery =
+        document.getElementById("galleryGrid");
+
+    if(!gallery) return;
+
+    gallery.innerHTML="";
+
+    const images=[];
+
+    if(dream?.image){
+
+        images.push(dream.image);
+
+    }
+
+    document
+    .querySelectorAll(".relationPreview,.auPreview,.commissionPreview")
+    .forEach(img=>{
+
+        if(img.src && !img.src.includes("default.png")){
+
+            images.push(img.src);
+
+        }
+
+    });
+
+    images.forEach(src=>{
+
+        const image=document.createElement("img");
+
+        image.src=src;
+
+        image.loading="lazy";
+
+        image.onclick=()=>{
+
+            viewer.style.display="flex";
+
+            viewerImage.src=src;
+
+        };
+
+        gallery.appendChild(image);
+
+    });
+
+}
+
+// -------------------------
+// 이미지 오류 처리
+// -------------------------
+
+document.addEventListener("error",(e)=>{
+
+    if(e.target.tagName==="IMG"){
+
+        e.target.src="default.png";
+
+    }
+
+},true);
+
+// -------------------------
+// 모바일 메뉴 스크롤
+// -------------------------
+
+const tabMenu=document.querySelector(".tabMenu");
+
+if(tabMenu){
+
+    let startX=0;
+
+    tabMenu.addEventListener("touchstart",(e)=>{
+
+        startX=e.touches[0].clientX;
+
+    });
+
+    tabMenu.addEventListener("touchmove",(e)=>{
+
+        const move=startX-e.touches[0].clientX;
+
+        tabMenu.scrollLeft+=move;
+
+        startX=e.touches[0].clientX;
+
+    });
+
+}
+
+// -------------------------
+// ESC
+// -------------------------
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape"){
+
+        viewer.style.display="none";
+
+        const modal=document.getElementById("settingModal");
+
+        if(modal){
+
+            modal.style.display="none";
+
+        }
+
+    }
+
+});
+
+// -------------------------
+// 저장 후 갤러리 갱신
+// -------------------------
+
+const oldSave=saveDream;
+
+saveDream=async function(){
+
+    await oldSave();
+
+    refreshGallery();
+
+    saveCompleted();
+
+};
+
+// -------------------------
+// 첫 실행
+// -------------------------
+
+refreshGallery();
+
+console.log("Dream Archive Ready 🚀");
