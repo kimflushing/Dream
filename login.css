@@ -2,85 +2,125 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:"Gowun Dodum",sans-serif;
+    font-family:'Gowun Dodum',sans-serif;
 }
 
 body{
     width:100%;
-    min-height:100vh;
+    height:100vh;
+    overflow:hidden;
+    background:linear-gradient(135deg,#ffe8f3,#fff7fb,#fdfdff);
     display:flex;
     justify-content:center;
     align-items:center;
-    background:#FFF9FB;
-    overflow:hidden;
-    position:relative;
 }
 
-/* 배경 */
-
-.background{
+.bg{
     position:fixed;
     inset:0;
-    background:
-    radial-gradient(circle at 20% 20%,#FFE8F2 0%,transparent 35%),
-    radial-gradient(circle at 80% 30%,#FCEFFF 0%,transparent 35%),
-    radial-gradient(circle at 50% 90%,#FFF3DC 0%,transparent 40%);
-    filter:blur(40px);
-    animation:bgMove 10s ease-in-out infinite alternate;
+    overflow:hidden;
 }
 
-@keyframes bgMove{
-
-from{
-transform:scale(1);
+.circle{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(80px);
+    opacity:.5;
+    animation:float 10s ease-in-out infinite;
 }
 
-to{
-transform:scale(1.15);
+.c1{
+    width:350px;
+    height:350px;
+    background:#ffd3ec;
+    top:-80px;
+    left:-80px;
+}
+
+.c2{
+    width:280px;
+    height:280px;
+    background:#ffe6f6;
+    bottom:-60px;
+    right:-60px;
+    animation-delay:2s;
+}
+
+.c3{
+    width:220px;
+    height:220px;
+    background:#fff0f8;
+    top:45%;
+    left:60%;
+    animation-delay:4s;
+}
+
+@keyframes float{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-35px);
+}
+
+100%{
+transform:translateY(0px);
 }
 
 }
-
-/* 카드 */
 
 .loginCard{
-
-position:relative;
-z-index:5;
 
 width:420px;
 max-width:92%;
 
-padding:45px 35px;
-
-border-radius:28px;
-
-background:rgba(255,255,255,.72);
+background:rgba(255,255,255,.75);
 
 backdrop-filter:blur(18px);
 
+border-radius:28px;
+
+padding:45px;
+
 box-shadow:
-0 10px 35px rgba(0,0,0,.08);
 
-border:1px solid rgba(255,255,255,.7);
+0 20px 60px rgba(0,0,0,.08);
 
-display:flex;
-flex-direction:column;
-gap:18px;
+border:1px solid rgba(255,255,255,.8);
+
+animation:show .8s;
 
 }
 
-/* 제목 */
+@keyframes show{
+
+from{
+
+opacity:0;
+transform:translateY(30px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
 
 .loginCard h1{
 
 text-align:center;
 
-font-size:38px;
+font-size:34px;
 
-color:#5B4B54;
+color:#ff6fa8;
 
-margin-bottom:5px;
+margin-bottom:10px;
 
 }
 
@@ -88,75 +128,61 @@ margin-bottom:5px;
 
 text-align:center;
 
-color:#8E7C84;
+color:#888;
 
-font-size:15px;
-
-margin-bottom:15px;
-
-}
-
-/* 폼 */
-
-form{
-
-display:flex;
-
-flex-direction:column;
-
-gap:15px;
+margin-bottom:35px;
 
 }
 
 input{
 
-height:55px;
+width:100%;
+
+padding:16px;
+
+margin-bottom:16px;
 
 border:none;
 
 outline:none;
 
-border-radius:18px;
+border-radius:14px;
 
-padding:0 18px;
+background:#fff;
 
 font-size:15px;
 
-background:#FFF;
-
 transition:.3s;
 
-box-shadow:0 3px 12px rgba(0,0,0,.05);
+box-shadow:0 5px 18px rgba(0,0,0,.05);
 
 }
 
 input:focus{
 
-transform:translateY(-2px);
+transform:scale(1.02);
 
-box-shadow:0 6px 18px rgba(255,170,200,.25);
+box-shadow:0 8px 22px rgba(255,111,168,.18);
 
 }
 
-/* 버튼 */
-
 button{
 
-height:55px;
+width:100%;
+
+padding:16px;
 
 border:none;
 
-border-radius:18px;
+border-radius:14px;
+
+background:#ff82b8;
+
+color:white;
 
 font-size:16px;
 
 cursor:pointer;
-
-background:#F7D9E6;
-
-color:#5A4950;
-
-font-weight:bold;
 
 transition:.3s;
 
@@ -164,19 +190,15 @@ transition:.3s;
 
 button:hover{
 
-transform:translateY(-3px);
+transform:translateY(-2px);
 
-background:#F4C9DC;
-
-box-shadow:0 8px 18px rgba(255,180,210,.35);
+background:#ff6fa8;
 
 }
 
-/* 회원가입 */
-
 .bottom{
 
-margin-top:10px;
+margin-top:22px;
 
 display:flex;
 
@@ -186,177 +208,35 @@ gap:8px;
 
 font-size:14px;
 
-color:#777;
-
 }
 
 .bottom a{
 
-color:#D6789E;
-
 text-decoration:none;
 
-font-weight:bold;
+color:#ff6fa8;
 
-transition:.3s;
+font-weight:bold;
 
 }
 
 .bottom a:hover{
 
-opacity:.7;
+text-decoration:underline;
 
 }
-
-/* 모바일 */
 
 @media(max-width:600px){
 
 .loginCard{
 
-padding:35px 25px;
-
-border-radius:24px;
+padding:30px;
 
 }
 
 .loginCard h1{
 
-font-size:30px;
-
-}
-
-.subtitle{
-
-font-size:13px;
-
-}
-
-input,
-button{
-
-height:50px;
-
-}
-
-}
-
-/* ===========================
-   로그인 성공 애니메이션
-=========================== */
-
-.loginSuccess{
-
-animation:loginSuccess .9s cubic-bezier(.22,1,.36,1) forwards;
-
-}
-
-@keyframes loginSuccess{
-
-0%{
-
-opacity:1;
-transform:scale(1);
-
-}
-
-40%{
-
-transform:scale(.96);
-
-}
-
-70%{
-
-transform:scale(1.04);
-
-}
-
-100%{
-
-opacity:0;
-transform:scale(1.15);
-
-filter:blur(8px);
-
-}
-
-}
-
-/* 버튼 성공 효과 */
-
-button.success{
-
-background:#BFE9C8;
-color:#356241;
-
-animation:buttonPop .6s ease;
-
-}
-
-@keyframes buttonPop{
-
-0%{
-
-transform:scale(1);
-
-}
-
-40%{
-
-transform:scale(.94);
-
-}
-
-70%{
-
-transform:scale(1.06);
-
-}
-
-100%{
-
-transform:scale(1);
-
-}
-
-}
-
-/* 성공 후 화면 페이드 */
-
-.screenFade{
-
-position:fixed;
-
-left:0;
-top:0;
-
-width:100%;
-height:100%;
-
-background:white;
-
-pointer-events:none;
-
-opacity:0;
-
-z-index:9999;
-
-animation:screenFade .8s forwards;
-
-}
-
-@keyframes screenFade{
-
-0%{
-
-opacity:0;
-
-}
-
-100%{
-
-opacity:1;
+font-size:28px;
 
 }
 
