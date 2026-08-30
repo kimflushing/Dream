@@ -14,19 +14,28 @@ let selectedImage = null;
 
 window.addEventListener("DOMContentLoaded", async () => {
 
-    alert("1");
+    try {
 
-    await checkLogin();
+        alert("1");
 
-    alert("2");
+        await checkLogin();
 
-    bindEvents();
+        alert("2");
 
-    alert("3");
+        bindEvents();
 
-    await loadDreams();
+        alert("3");
 
-    alert("4");
+        await loadDreams();
+
+        alert("4");
+
+    } catch (e) {
+
+        alert("오류 : " + e.message);
+        console.error(e);
+
+    }
 
 });
 
