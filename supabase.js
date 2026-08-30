@@ -10,3 +10,4 @@ const supabase = window.supabase.createClient(
     supabaseUrl,
     supabaseKey
 );
+alert("supabase 생성 완료");
