@@ -1,3 +1,7 @@
+alert("script 시작");
+window.onerror = function(message, source, line, col) {
+    alert(message + "\n줄: " + line);
+};
 // =========================
 // Dream Archive
 // script.js (1)
