@@ -31,8 +31,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 async function checkLogin() {
 
-    const { data } = await supabase.auth.getUser();
-
+const { data } = await db.auth.getUser();
     if (!data.user) {
 
         location.href = "login.html";
@@ -104,8 +103,7 @@ function bindTabs() {
 
 async function loadDream() {
 
-    const { data, error } = await supabase
-
+const { data, error } = await db
         .from("dreams")
 
         .select("*")
@@ -239,8 +237,7 @@ async function uploadImage(file){
     const fileName =
         `${user.id}/${Date.now()}_${file.name}`;
 
-    const { error } = await supabase.storage
-
+await db.storage
         .from("dream-image")
 
         .upload(fileName,file);
@@ -253,7 +250,7 @@ async function uploadImage(file){
 
     }
 
-    const { data } = supabase.storage
+    const { data } = db.storage
 
         .from("dream-image")
 
@@ -325,8 +322,7 @@ async function saveDream(){
 
     };
 
-    const { error } = await supabase
-
+const { error } = await db
         .from("dreams")
 
         .update(updateData)
@@ -504,7 +500,7 @@ document
 
     showLoading();
 
-    const { error } = await supabase
+    const { error } = await db
 
         .from("dreams")
 
@@ -724,7 +720,7 @@ window.addEventListener("click", (e) => {
 // 실시간 동기화
 // -------------------------
 
-supabase
+db
 .channel("dream-update")
 .on(
     "postgres_changes",
