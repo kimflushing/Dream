@@ -87,16 +87,12 @@ async function logout() {
 // -------------------------
 
 async function loadDreams() {
-    alert(typeof supabase);
-alert(typeof supabase.from);
-console.log(supabase);
 
-    const { data, error } = await supabase
+    const { data, error } = await db
         .from("dreams")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
-
 
     if (error) {
         alert("에러 : " + error.message);
@@ -334,8 +330,7 @@ async function uploadImage(file){
 
     const fileName = `${user.id}/${Date.now()}_${file.name}`;
 
-    const { error } = await supabase.storage
-
+const { error } = await db.storage
         .from("dream-image")
 
         .upload(fileName,file);
@@ -348,8 +343,7 @@ async function uploadImage(file){
 
     }
 
-    const { data } = supabase.storage
-
+const { data } = db.storage
         .from("dream-image")
 
         .getPublicUrl(fileName);
@@ -388,8 +382,12 @@ try {
 
     const imageUrl = await uploadImage(selectedImage);
 
-    const { error } = await supabase
-        .from("dreams")
+const { error } = await db  
+    if (error) {
+    alert(error.message);
+    return;
+    }
+    .from("dreams")
         .insert({
             user_id: user.id,
             name: name,
@@ -408,13 +406,6 @@ try {
 
 }
 
-    if(error){
-
-        alert(error.message);
-
-        return;
-
-    }
 
     toast("드림이 저장되었습니다.");
 
