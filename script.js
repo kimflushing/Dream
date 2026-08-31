@@ -1,4 +1,3 @@
-alert("script 실행됨");
 // =========================
 // Dream Archive
 // script.js (1)
@@ -356,64 +355,61 @@ const { data } = db.storage
 // 저장
 // -------------------------
 
-async function saveDream(){
+async function saveDream() {
+
     if (!user) {
-    alert("로그인 정보를 불러오지 못했습니다.");
-    return;
-}
+        alert("로그인 정보를 불러오지 못했습니다.");
+        return;
+    }
 
     const name = document.getElementById("dreamName").value.trim();
-
     const intro = document.getElementById("dreamIntro").value.trim();
-
     const startDate = document.getElementById("dreamDate").value;
 
-    if(name===""){
-
+    if (name === "") {
         alert("드림 이름을 입력해주세요.");
-
         return;
+    }
+
+    showLoading();
+
+    try {
+
+        const imageUrl = await uploadImage(selectedImage);
+
+        const { error } = await db
+            .from("dreams")
+            .insert({
+                user_id: user.id,
+                name: name,
+                intro: intro,
+                image: imageUrl,
+                start_date: startDate
+            });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        toast("드림이 저장되었습니다.");
+
+        closeModal();
+
+        await loadDreams();
+
+    } catch (e) {
+
+        alert("오류 : " + e.message);
+
+    } finally {
+
+        hideLoading();
 
     }
 
-  showLoading();
-
-try {
-
-    const imageUrl = await uploadImage(selectedImage);
-
-const { error } = await db  
-    if (error) {
-    alert(error.message);
-    return;
-    }
-    .from("dreams")
-        .insert({
-            user_id: user.id,
-            name: name,
-            intro: intro,
-            image: imageUrl,
-            start_date: startDate
-        });
-
-} catch (e) {
-
-    alert("오류 : " + e.message);
-
-} finally {
-
-    hideLoading();
-
 }
 
-
-    toast("드림이 저장되었습니다.");
-
-    closeModal();
-
-    await loadDreams();
-
-}
 // =========================
 // script.js (9-3)
 // JSON / Toast / Loading / Setting
