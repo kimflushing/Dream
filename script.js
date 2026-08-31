@@ -568,7 +568,7 @@ async function restoreJSON(e){
 
     for(const dream of data){
 
-        await supabase
+        await db
 
             .from("dreams")
 
@@ -612,8 +612,7 @@ async function deleteDream(id){
 
     showLoading();
 
-    const { error } = await supabase
-
+const { error } = await db
         .from("dreams")
 
         .delete()
@@ -646,8 +645,7 @@ async function updateDream(id,data){
 
     showLoading();
 
-    const { error } = await supabase
-
+const { error } = await db
         .from("dreams")
 
         .update(data)
@@ -706,10 +704,9 @@ async function refreshDreamList(){
 // 실시간 동기화
 // -------------------------
 
-supabase
+db
 
 .channel("dreams")
-
 .on(
 
 "postgres_changes",
