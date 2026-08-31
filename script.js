@@ -1,4 +1,4 @@
-
+alert("script 실행됨");
 // =========================
 // Dream Archive
 // script.js (1)
