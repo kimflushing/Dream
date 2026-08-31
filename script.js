@@ -37,7 +37,7 @@ async function checkLogin() {
 
     try {
 
-        const { data, error } = await supabase.auth.getUser();
+        const { data, error } = await db.auth.getUser();
 
         if (error) {
             alert("getUser 에러 : " + error.message);
@@ -76,7 +76,7 @@ async function logout() {
 
     if (!ok) return;
 
-    await supabase.auth.signOut();
+    await db.auth.signOut();
 
     location.href = "login.html";
 
