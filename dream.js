@@ -458,11 +458,21 @@ function addAU(){
 
 function addCommission(){
 
-    const card=document.createElement("div");
+    const card = document.createElement("div");
 
-    card.className="commissionCard";
+    card.className = "commissionCard";
 
-    card.innerHTML=`
+    card.innerHTML = `
+
+<input type="file" accept="image/*" class="commissionImage" hidden>
+
+<img class="commissionPreview" src="default.png">
+
+<button class="selectCommissionImage">
+
+사진 선택
+
+</button>
 
 <input class="artistName" placeholder="작가">
 
@@ -470,11 +480,46 @@ function addCommission(){
 
 <textarea class="commissionMemo" placeholder="메모"></textarea>
 
-<button class="deleteCommission">삭제</button>
+<button class="deleteCommission">
+
+삭제
+
+</button>
 
 `;
 
-    card.querySelector(".deleteCommission").onclick=()=>{
+    const fileInput = card.querySelector(".commissionImage");
+    const preview = card.querySelector(".commissionPreview");
+    const button = card.querySelector(".selectCommissionImage");
+
+    // 사진 선택 버튼
+    button.onclick = () => {
+
+        fileInput.click();
+
+    };
+
+    // 사진 미리보기
+    fileInput.onchange = (e) => {
+
+        const file = e.target.files[0];
+
+        if(!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+
+            preview.src = reader.result;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    };
+
+    // 삭제
+    card.querySelector(".deleteCommission").onclick = () => {
 
         card.remove();
 
@@ -483,6 +528,8 @@ function addCommission(){
     document.getElementById("commissionList").appendChild(card);
 
 }
+
+
 
 // -------------------------
 // 삭제
