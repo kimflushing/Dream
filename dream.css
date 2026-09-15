@@ -986,3 +986,17 @@ padding:20px;
 }
 
 }
+
+.selectCommissionImage{
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:#ffd8ea;
+    cursor:pointer;
+}
+
+.selectCommissionImage:hover{
+    background:#ffc3df;
+}
