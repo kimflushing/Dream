@@ -248,11 +248,19 @@ document.querySelectorAll(".createType").forEach(btn=>{
 
     btn.onclick = async ()=>{
 
-        const type = btn.dataset.type;
+        const title =
+            document.getElementById("newTitle").value.trim();
 
-        const title = prompt("제목을 입력하세요.");
+        const intro =
+            document.getElementById("newIntro").value.trim();
 
-        if(!title) return;
+        if(title===""){
+
+            alert("제목을 입력해주세요.");
+
+            return;
+
+        }
 
         const { data, error } = await db
 
@@ -262,11 +270,11 @@ document.querySelectorAll(".createType").forEach(btn=>{
 
                 user_id:user.id,
 
-                type:type,
+                type:btn.dataset.type,
 
                 title:title,
 
-                intro:"",
+                intro:intro,
 
                 cover:"",
 
@@ -286,11 +294,15 @@ document.querySelectorAll(".createType").forEach(btn=>{
 
         }
 
+        document.getElementById("createModal").style.display="none";
+
+        document.getElementById("newTitle").value="";
+
+        document.getElementById("newIntro").value="";
+
         archives.unshift(data);
 
         renderCards();
-
-        document.getElementById("createModal").style.display="none";
 
         location.href=`detail.html?id=${data.id}`;
 
