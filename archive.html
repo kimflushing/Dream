@@ -101,35 +101,39 @@
 
 <div id="createModal" class="modal">
 
-<div class="modalBox">
+    <div class="modalBox">
 
-<h2>새 캐릭터</h2>
+        <h2>새 아카이브 만들기</h2>
 
-<button class="createType" data-type="dream">
+        <input
+            id="newTitle"
+            placeholder="제목">
 
-드림 만들기
+        <textarea
+            id="newIntro"
+            placeholder="한 줄 소개"></textarea>
 
-</button>
+        <div class="typeSelect">
 
-<button class="createType" data-type="pair">
+            <button class="createType" data-type="dream">
+                드림
+            </button>
 
-페어 만들기
+            <button class="createType" data-type="pair">
+                페어
+            </button>
 
-</button>
+            <button class="createType" data-type="oc">
+                자캐
+            </button>
 
-<button class="createType" data-type="oc">
+        </div>
 
-자캐 만들기
+        <button id="closeModal">
+            취소
+        </button>
 
-</button>
-
-<button id="closeModal">
-
-취소
-
-</button>
-
-</div>
+    </div>
 
 </div>
 
