@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Character Detail</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="detail.css">
+
+</head>
+
+<body>
+
+<div class="background">
+
+<div class="blur pink"></div>
+
+<div class="blur blue"></div>
+
+<div class="blur yellow"></div>
+
+</div>
+
+<header>
+
+<button id="backBtn">
+
+←
+
+</button>
+
+<h1 id="archiveTitle">
+
+Loading...
+
+</h1>
+
+<button id="saveBtn">
+
+저장
+
+</button>
+
+</header>
+
+<main>
+
+<!-- 대표 정보 -->
+
+<section class="archiveCard">
+
+<img
+id="coverImage"
+src="default.png">
+
+<div class="archiveInfo">
+
+<input
+id="titleInput"
+placeholder="제목">
+
+<textarea
+id="introInput"
+placeholder="한 줄 소개"></textarea>
+
+</div>
+
+</section>
+
+<!-- 캐릭터 -->
+
+<section>
+
+<div class="sectionHeader">
+
+<h2>
+
+👥 캐릭터
+
+</h2>
+
+<button id="addCharacter">
+
+＋
+
+</button>
+
+</div>
+
+<div id="characterList">
+
+</div>
+
+</section>
+
+<!-- 메뉴 -->
+
+<section class="menuGrid">
+
+<button class="menuButton">
+
+📖
+
+<span>
+
+서사
+
+</span>
+
+</button>
+
+<button class="menuButton">
+
+🤝
+
+<span>
+
+관계
+
+</span>
+
+</button>
+
+<button class="menuButton">
+
+🌌
+
+<span>
+
+AU
+
+</span>
+
+</button>
+
+<button class="menuButton">
+
+🖼
+
+<span>
+
+커미션
+
+</span>
+
+</button>
+
+<button class="menuButton">
+
+📝
+
+<span>
+
+로그
+
+</span>
+
+</button>
+
+</section>
+
+</main>
+
+<!-- 캐릭터 추가 -->
+
+<div
+id="characterModal"
+class="modal">
+
+<div class="modalBox">
+
+<h2>
+
+새 캐릭터
+
+</h2>
+
+<input
+id="characterName"
+placeholder="이름">
+
+<input
+id="characterRole"
+placeholder="역할 (드림주 / 드림캐 / 자캐 등)">
+
+<button
+id="createCharacter">
+
+추가
+
+</button>
+
+<button
+id="closeCharacter">
+
+취소
+
+</button>
+
+</div>
+
+</div>
+
+<script src="supabase.js"></script>
+
+<script src="detail.js"></script>
+
+</body>
+
+</html>
