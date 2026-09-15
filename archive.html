@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Character Archive</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="archive.css">
+
+</head>
+
+<body>
+
+<!-- 배경 -->
+
+<div class="background">
+
+<div class="blur pink"></div>
+
+<div class="blur blue"></div>
+
+<div class="blur yellow"></div>
+
+</div>
+
+<!-- 상단 -->
+
+<header>
+
+<h1>Character Archive</h1>
+
+<div class="headerButtons">
+
+<button id="themeBtn">🎨</button>
+
+<button id="logoutBtn">로그아웃</button>
+
+</div>
+
+</header>
+
+<!-- 필터 -->
+
+<nav class="filterMenu">
+
+<button class="filter active" data-type="all">
+
+전체
+
+</button>
+
+<button class="filter" data-type="dream">
+
+드림
+
+</button>
+
+<button class="filter" data-type="pair">
+
+페어
+
+</button>
+
+<button class="filter" data-type="oc">
+
+자캐
+
+</button>
+
+</nav>
+
+<!-- 카드 -->
+
+<main>
+
+<div id="cardContainer">
+
+<!-- JS에서 생성 -->
+
+</div>
+
+</main>
+
+<!-- 추가 버튼 -->
+
+<button id="addCharacter">
+
++
+
+</button>
+
+<!-- 생성 메뉴 -->
+
+<div id="createModal" class="modal">
+
+<div class="modalBox">
+
+<h2>새 캐릭터</h2>
+
+<button class="createType" data-type="dream">
+
+드림 만들기
+
+</button>
+
+<button class="createType" data-type="pair">
+
+페어 만들기
+
+</button>
+
+<button class="createType" data-type="oc">
+
+자캐 만들기
+
+</button>
+
+<button id="closeModal">
+
+취소
+
+</button>
+
+</div>
+
+</div>
+
+<!-- 테마 -->
+
+<div id="themeModal" class="modal">
+
+<div class="modalBox">
+
+<h2>테마 선택</h2>
+
+<button class="theme" data-theme="pink">
+
+🌸 Sakura
+
+</button>
+
+<button class="theme" data-theme="blue">
+
+🌊 Sky
+
+</button>
+
+<button class="theme" data-theme="mint">
+
+🍀 Mint
+
+</button>
+
+<button class="theme" data-theme="purple">
+
+💜 Lavender
+
+</button>
+
+<button class="theme" data-theme="black">
+
+🖤 Night
+
+</button>
+
+<button id="closeTheme">
+
+닫기
+
+</button>
+
+</div>
+
+</div>
+
+<script src="supabase.js"></script>
+<script src="archive.js"></script>
+
+</body>
+
+</html>
