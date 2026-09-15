@@ -68,7 +68,7 @@ function createDefaultCharacters(){
 // 캐릭터 생성
 // --------------------------
 
-function createCharacter(title="새 캐릭터"){
+async function createCharacter(title="새 캐릭터"){
 
     const template=document
     .getElementById("characterTemplate");
