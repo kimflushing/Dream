@@ -458,21 +458,25 @@ function addAU(){
 
 function addCommission(){
 
-    const card = document.createElement("div");
+    const card=document.createElement("div");
 
-    card.className = "commissionCard";
+    card.className="commissionCard";
 
-    card.innerHTML = `
+    card.innerHTML=`
 
-<input type="file" accept="image/*" class="commissionImage" hidden>
+<div>
+
+<input type="file" class="commissionImage" accept="image/*" hidden>
 
 <img class="commissionPreview" src="default.png">
 
-<button class="selectCommissionImage">
-
+<button type="button" class="selectCommissionImage">
 사진 선택
-
 </button>
+
+</div>
+
+<div class="commissionInfo">
 
 <input class="artistName" placeholder="작가">
 
@@ -480,37 +484,34 @@ function addCommission(){
 
 <textarea class="commissionMemo" placeholder="메모"></textarea>
 
-<button class="deleteCommission">
-
+<button type="button" class="deleteCommission">
 삭제
-
 </button>
+
+</div>
 
 `;
 
-    const fileInput = card.querySelector(".commissionImage");
-    const preview = card.querySelector(".commissionPreview");
-    const button = card.querySelector(".selectCommissionImage");
+    const input=card.querySelector(".commissionImage");
+    const preview=card.querySelector(".commissionPreview");
 
-    // 사진 선택 버튼
-    button.onclick = () => {
+    card.querySelector(".selectCommissionImage").onclick=()=>{
 
-        fileInput.click();
+        input.click();
 
     };
 
-    // 사진 미리보기
-    fileInput.onchange = (e) => {
+    input.onchange=(e)=>{
 
-        const file = e.target.files[0];
+        const file=e.target.files[0];
 
         if(!file) return;
 
-        const reader = new FileReader();
+        const reader=new FileReader();
 
-        reader.onload = () => {
+        reader.onload=()=>{
 
-            preview.src = reader.result;
+            preview.src=reader.result;
 
         };
 
@@ -518,8 +519,7 @@ function addCommission(){
 
     };
 
-    // 삭제
-    card.querySelector(".deleteCommission").onclick = () => {
+    card.querySelector(".deleteCommission").onclick=()=>{
 
         card.remove();
 
