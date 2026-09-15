@@ -1,4 +1,6 @@
-// =========================
+window.onerror = function(message, source, line, col, error) {
+    alert(message + "\n줄: " + line);
+};// =========================
 // Dream Archive
 // dream.js (1/6)
 // =========================
