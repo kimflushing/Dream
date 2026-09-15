@@ -253,8 +253,9 @@ function previewImage(e){
 // -------------------------
 // Storage 업로드
 // -------------------------
-
 async function uploadImage(file){
+
+    alert("uploadImage 실행");
 
     if(!file){
 
@@ -265,15 +266,19 @@ async function uploadImage(file){
     const fileName =
         `${user.id}/${Date.now()}_${file.name}`;
 
+    alert("업로드 시작");
+
     const { error } = await db.storage
         .from("dream-image")
         .upload(fileName, file, {
             upsert:true
         });
 
+    alert("업로드 완료");
+
     if(error){
 
-        alert("이미지 업로드 실패\n"+error.message);
+        alert(error.message);
 
         return dream.image || "";
 
