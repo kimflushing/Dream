@@ -8,20 +8,27 @@ const dreamId = params.get("id");
 
 let user = null;
 let dream = null;
-
-// -------------------------
-// 시작
-// -------------------------
+let selectedImage = null;
 
 window.addEventListener("DOMContentLoaded", async () => {
 
-    await checkLogin();
+    try {
 
-    await loadDream();
+        await checkLogin();
 
-    bindTabs();
+        await loadDream();
 
-    bindButtons();
+        bindTabs();
+
+        bindButtons();
+
+        updateDDay();
+
+    } catch (e) {
+
+        alert(e.message);
+
+    }
 
 });
 
@@ -29,41 +36,51 @@ window.addEventListener("DOMContentLoaded", async () => {
 // 로그인 확인
 // -------------------------
 
-async function checkLogin() {
+async function checkLogin(){
 
-const { data } = await db.auth.getUser();
-    if (!data.user) {
+    const { data, error } = await db.auth.getUser();
 
-        location.href = "login.html";
+    if(error){
+
+        alert(error.message);
+
         return;
 
     }
 
-    user = data.user;
+    if(!data.user){
+
+        location.href="login.html";
+
+        return;
+
+    }
+
+    user=data.user;
 
 }
 
 // -------------------------
-// 버튼 이벤트
+// 버튼
 // -------------------------
 
-function bindButtons() {
+function bindButtons(){
 
-    document.getElementById("backBtn").onclick = () => {
+    document.getElementById("backBtn").onclick=()=>{
 
-        location.href = "index.html";
+        location.href="index.html";
 
     };
 
-    document.getElementById("saveBtn").onclick = saveDream;
+    document.getElementById("saveBtn").onclick=saveDream;
 
-    document.getElementById("changeImage").onclick = () => {
+    document.getElementById("changeImage").onclick=()=>{
 
         document.getElementById("mainImage").click();
 
     };
 
-    document.getElementById("mainImage").onchange = previewImage;
+    document.getElementById("mainImage").onchange=previewImage;
 
 }
 
@@ -71,25 +88,25 @@ function bindButtons() {
 // 탭
 // -------------------------
 
-function bindTabs() {
+function bindTabs(){
 
-    const tabs = document.querySelectorAll(".tab");
+    const tabs=document.querySelectorAll(".tab");
 
-    const contents = document.querySelectorAll(".tabContent");
+    const contents=document.querySelectorAll(".tabContent");
 
-    tabs.forEach(tab => {
+    tabs.forEach(tab=>{
 
-        tab.onclick = () => {
+        tab.onclick=()=>{
 
-            tabs.forEach(t => t.classList.remove("active"));
+            tabs.forEach(t=>t.classList.remove("active"));
 
-            contents.forEach(c => c.classList.remove("active"));
+            contents.forEach(c=>c.classList.remove("active"));
 
             tab.classList.add("active");
 
             document
-                .getElementById(tab.dataset.tab)
-                .classList.add("active");
+            .getElementById(tab.dataset.tab)
+            .classList.add("active");
 
         };
 
@@ -101,28 +118,31 @@ function bindTabs() {
 // 드림 불러오기
 // -------------------------
 
-async function loadDream() {
+async function loadDream(){
 
-const { data, error } = await db
-        .from("dreams")
+    const { data,error } = await db
 
-        .select("*")
+    .from("dreams")
 
-        .eq("id", dreamId)
+    .select("*")
 
-        .single();
+    .eq("id",dreamId)
 
-    if (error) {
+    .eq("user_id",user.id)
+
+    .single();
+
+    if(error){
 
         alert(error.message);
 
-        location.href = "index.html";
+        location.href="index.html";
 
         return;
 
     }
 
-    dream = data;
+    dream=data;
 
     fillData();
 
@@ -132,21 +152,43 @@ const { data, error } = await db
 // 화면 채우기
 // -------------------------
 
-function fillData() {
+function fillData(){
 
-    document.title = dream.name;
+    document.title=dream.name||"Dream";
 
-    document.getElementById("dreamTitle").textContent = dream.name;
+    document.getElementById("dreamTitle").textContent=dream.name||"";
 
-    document.getElementById("dreamName").value = dream.name || "";
+    document.getElementById("dreamName").value=dream.name||"";
 
-    document.getElementById("intro").value = dream.intro || "";
+    document.getElementById("intro").value=dream.intro||"";
 
-    document.getElementById("startDate").value =
-        dream.start_date || "";
+    document.getElementById("startDate").value=dream.start_date||"";
 
-    document.getElementById("previewImage").src =
-        dream.image || "default.png";
+    document.getElementById("previewImage").src=dream.image||"default.png";
+
+    document.getElementById("characterName").value=dream.character_name||"";
+
+    document.getElementById("height").value=dream.height||"";
+
+    document.getElementById("birthday").value=dream.birthday||"";
+
+    document.getElementById("age").value=dream.age||"";
+
+    document.getElementById("mbti").value=dream.mbti||"";
+
+    document.getElementById("job").value=dream.job||"";
+
+    document.getElementById("appearanceText").value=dream.appearance||"";
+
+    document.getElementById("worldName").value=dream.world_name||"";
+
+    document.getElementById("group").value=dream.group_name||"";
+
+    document.getElementById("ability").value=dream.ability||"";
+
+    document.getElementById("settingText").value=dream.setting_text||"";
+
+    document.getElementById("storyText").value=dream.story||"";
 
     updateDDay();
 
@@ -156,46 +198,33 @@ function fillData() {
 // D-Day
 // -------------------------
 
-function updateDDay() {
+function updateDDay(){
 
-    const value =
-        document.getElementById("startDate").value;
+    const value=document.getElementById("startDate").value;
 
-    if (!value) {
+    if(!value){
 
-        document.getElementById("dday").textContent =
-            "D+0";
+        document.getElementById("dday").textContent="D+0";
 
         return;
 
     }
 
-    const start = new Date(value);
+    const start=new Date(value);
 
-    const today = new Date();
+    const today=new Date();
 
-    const diff = Math.floor(
+    const diff=Math.floor((today-start)/(1000*60*60*24));
 
-        (today - start) /
-
-        (1000 * 60 * 60 * 24)
-
-    );
-
-    document.getElementById("dday").textContent =
-        `D+${diff}`;
+    document.getElementById("dday").textContent=`D+${diff}`;
 
 }
 
-document
-.getElementById("startDate")
-.addEventListener("change", updateDDay);
+document.getElementById("startDate").addEventListener("change",updateDDay);
 // =========================
 // dream.js (2/6)
 // 이미지 / 저장
 // =========================
-
-let selectedImage = null;
 
 // -------------------------
 // 이미지 미리보기
@@ -211,10 +240,9 @@ function previewImage(e){
 
     const reader = new FileReader();
 
-    reader.onload = function(){
+    reader.onload = () => {
 
-        document.getElementById("previewImage").src =
-            reader.result;
+        document.getElementById("previewImage").src = reader.result;
 
     };
 
@@ -230,30 +258,29 @@ async function uploadImage(file){
 
     if(!file){
 
-        return dream.image;
+        return dream.image || "";
 
     }
 
     const fileName =
         `${user.id}/${Date.now()}_${file.name}`;
 
-await db.storage
+    const { error } = await db.storage
         .from("dream-image")
-
-        .upload(fileName,file);
+        .upload(fileName, file, {
+            upsert:true
+        });
 
     if(error){
 
-        alert(error.message);
+        alert("이미지 업로드 실패\n"+error.message);
 
-        return dream.image;
+        return dream.image || "";
 
     }
 
     const { data } = db.storage
-
         .from("dream-image")
-
         .getPublicUrl(fileName);
 
     return data.publicUrl;
@@ -268,103 +295,90 @@ async function saveDream(){
 
     showLoading();
 
-    const imageUrl =
-        await uploadImage(selectedImage);
+    try{
 
-    const updateData = {
+        const imageUrl = await uploadImage(selectedImage);
 
-        name:
-        document.getElementById("dreamName").value,
+        const updateData={
 
-        intro:
-        document.getElementById("intro").value,
+            name:document.getElementById("dreamName").value,
 
-        start_date:
-        document.getElementById("startDate").value,
+            intro:document.getElementById("intro").value,
 
-        image:imageUrl,
+            image:imageUrl,
 
-        character_name:
-        document.getElementById("characterName").value,
+            start_date:document.getElementById("startDate").value,
 
-        height:
-        document.getElementById("height").value,
+            character_name:document.getElementById("characterName").value,
 
-        birthday:
-        document.getElementById("birthday").value,
+            height:document.getElementById("height").value,
 
-        age:
-        document.getElementById("age").value,
+            birthday:document.getElementById("birthday").value,
 
-        mbti:
-        document.getElementById("mbti").value,
+            age:document.getElementById("age").value,
 
-        job:
-        document.getElementById("job").value,
+            mbti:document.getElementById("mbti").value,
 
-        appearance:
-        document.getElementById("appearanceText").value,
+            job:document.getElementById("job").value,
 
-        world_name:
-        document.getElementById("worldName").value,
+            appearance:document.getElementById("appearanceText").value,
 
-        group_name:
-        document.getElementById("group").value,
+            world_name:document.getElementById("worldName").value,
 
-        ability:
-        document.getElementById("ability").value,
+            group_name:document.getElementById("group").value,
 
-        setting_text:
-        document.getElementById("settingText").value,
+            ability:document.getElementById("ability").value,
 
-        story:
-        document.getElementById("storyText").value
+            setting_text:document.getElementById("settingText").value,
 
-    };
+            story:document.getElementById("storyText").value
 
-const { error } = await db
-        .from("dreams")
+        };
 
-        .update(updateData)
+        const { error } = await db
+            .from("dreams")
+            .update(updateData)
+            .eq("id",dreamId)
+            .eq("user_id",user.id);
 
-        .eq("id",dreamId)
+        if(error){
 
-        .eq("user_id",user.id);
+            alert(error.message);
 
-    hideLoading();
+            return;
 
-    if(error){
+        }
 
-        alert(error.message);
+        dream = {
+            ...dream,
+            ...updateData
+        };
 
-        return;
+        toast("저장되었습니다.");
+
+    }catch(e){
+
+        alert(e.message);
+
+    }finally{
+
+        hideLoading();
 
     }
-
-    toast("저장되었습니다.");
-
-    dream = {
-
-        ...dream,
-
-        ...updateData
-
-    };
 
 }
 // =========================
 // dream.js (3/6)
-// 관계 / AU / 커미션
+// 관계 / AU / 삭제
 // =========================
 
-// -------------------------
-// 버튼 연결
-// -------------------------
-
+// 관계
 document.getElementById("addRelation").onclick = addRelation;
 
+// AU
 document.getElementById("addAU").onclick = addAU;
 
+// 커미션
 document.getElementById("addCommission").onclick = addCommission;
 
 // -------------------------
@@ -373,22 +387,19 @@ document.getElementById("addCommission").onclick = addCommission;
 
 function addRelation(){
 
-    const card = document.createElement("div");
+    const card=document.createElement("div");
 
-    card.className = "relationCard";
+    card.className="relationCard";
 
-    card.innerHTML = `
+    card.innerHTML=`
 
 <input class="relationName" placeholder="캐릭터 이름">
 
 <input class="relationType" placeholder="관계">
 
-<textarea class="relationMemo"
-placeholder="설명"></textarea>
+<textarea class="relationMemo" placeholder="설명"></textarea>
 
-<button class="deleteRelation">
-삭제
-</button>
+<button class="deleteRelation">삭제</button>
 
 `;
 
@@ -398,14 +409,12 @@ placeholder="설명"></textarea>
 
     };
 
-    document
-        .getElementById("relationList")
-        .appendChild(card);
+    document.getElementById("relationList").appendChild(card);
 
 }
 
 // -------------------------
-// AU 추가
+// AU
 // -------------------------
 
 function addAU(){
@@ -416,20 +425,13 @@ function addAU(){
 
     card.innerHTML=`
 
-<input class="auTitle"
-placeholder="AU 이름">
+<input class="auTitle" placeholder="AU 이름">
 
-<input class="auWorld"
-placeholder="세계관">
+<input class="auWorld" placeholder="세계관">
 
-<textarea class="auDescription"
-placeholder="설명"></textarea>
+<textarea class="auDescription" placeholder="설명"></textarea>
 
-<button class="deleteAU">
-
-삭제
-
-</button>
+<button class="deleteAU">삭제</button>
 
 `;
 
@@ -439,14 +441,12 @@ placeholder="설명"></textarea>
 
     };
 
-    document
-        .getElementById("auList")
-        .appendChild(card);
+    document.getElementById("auList").appendChild(card);
 
 }
 
 // -------------------------
-// 커미션 추가
+// 커미션
 // -------------------------
 
 function addCommission(){
@@ -457,20 +457,13 @@ function addCommission(){
 
     card.innerHTML=`
 
-<input class="artistName"
-placeholder="작가">
+<input class="artistName" placeholder="작가">
 
-<input class="commissionLink"
-placeholder="링크">
+<input class="commissionLink" placeholder="링크">
 
-<textarea class="commissionMemo"
-placeholder="메모"></textarea>
+<textarea class="commissionMemo" placeholder="메모"></textarea>
 
-<button class="deleteCommission">
-
-삭제
-
-</button>
+<button class="deleteCommission">삭제</button>
 
 `;
 
@@ -480,9 +473,7 @@ placeholder="메모"></textarea>
 
     };
 
-    document
-        .getElementById("commissionList")
-        .appendChild(card);
+    document.getElementById("commissionList").appendChild(card);
 
 }
 
@@ -490,532 +481,40 @@ placeholder="메모"></textarea>
 // 삭제
 // -------------------------
 
-document
-.getElementById("deleteDream")
-.onclick = async ()=>{
+document.getElementById("deleteDream").onclick=async()=>{
 
-    const ok=confirm("이 드림을 삭제하시겠습니까?");
-
-    if(!ok) return;
+    if(!confirm("이 드림을 삭제하시겠습니까?")) return;
 
     showLoading();
 
-    const { error } = await db
+    try{
 
-        .from("dreams")
+        const { error } = await db
 
-        .delete()
+            .from("dreams")
 
-        .eq("id",dreamId)
+            .delete()
 
-        .eq("user_id",user.id);
+            .eq("id",dreamId)
 
-    hideLoading();
+            .eq("user_id",user.id);
 
-    if(error){
+        if(error){
 
-        alert(error.message);
+            alert(error.message);
 
-        return;
-
-    }
-
-    alert("삭제되었습니다.");
-
-    location.href="index.html";
-
-};
-// =========================
-// dream.js (4/6)
-// Viewer / JSON / Auto Save
-// =========================
-
-// -------------------------
-// 이미지 확대
-// -------------------------
-
-const viewer = document.getElementById("imageViewer");
-const viewerImage = document.getElementById("viewerImage");
-
-document.getElementById("previewImage").onclick = () => {
-
-    viewer.style.display = "flex";
-
-    viewerImage.src =
-        document.getElementById("previewImage").src;
-
-};
-
-document.getElementById("closeViewer").onclick = () => {
-
-    viewer.style.display = "none";
-
-};
-
-viewer.onclick = (e) => {
-
-    if (e.target === viewer) {
-
-        viewer.style.display = "none";
-
-    }
-
-};
-
-// -------------------------
-// JSON 백업
-// -------------------------
-
-document.getElementById("exportJSON").onclick = () => {
-
-    const data = {
-
-        ...dream,
-
-        saved_at: new Date().toLocaleString()
-
-    };
-
-    const blob = new Blob(
-
-        [JSON.stringify(data, null, 2)],
-
-        {
-
-            type: "application/json"
+            return;
 
         }
 
-    );
+        alert("삭제되었습니다.");
 
-    const url = URL.createObjectURL(blob);
+        location.href="index.html";
 
-    const a = document.createElement("a");
+    }finally{
 
-    a.href = url;
+        hideLoading();
 
-    a.download = `${dream.name}.json`;
-
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-    toast("JSON 백업 완료");
+    }
 
 };
-
-// -------------------------
-// JSON 불러오기
-// -------------------------
-
-document.getElementById("importJSON").onclick = () => {
-
-    document.getElementById("jsonFile").click();
-
-};
-
-document.getElementById("jsonFile").addEventListener(
-
-    "change",
-
-    async (e) => {
-
-        const file = e.target.files[0];
-
-        if (!file) return;
-
-        try {
-
-            const text = await file.text();
-
-            const json = JSON.parse(text);
-
-            dream = {
-
-                ...dream,
-
-                ...json
-
-            };
-
-            fillData();
-
-            toast("JSON 불러오기 완료");
-
-        } catch {
-
-            alert("올바른 JSON 파일이 아닙니다.");
-
-        }
-
-    }
-
-);
-
-// -------------------------
-// 자동 저장
-// -------------------------
-
-let autoSaveTimer;
-
-document.querySelectorAll("input, textarea").forEach(input => {
-
-    input.addEventListener("input", () => {
-
-        clearTimeout(autoSaveTimer);
-
-        autoSaveTimer = setTimeout(() => {
-
-            saveDream();
-
-        }, 1200);
-
-    });
-
-});
-
-// -------------------------
-// Ctrl + S 저장
-// -------------------------
-
-document.addEventListener("keydown", (e) => {
-
-    if (e.ctrlKey && e.key === "s") {
-
-        e.preventDefault();
-
-        saveDream();
-
-    }
-
-});
-
-// -------------------------
-// 설정창 닫기
-// -------------------------
-
-document.getElementById("closeSetting").onclick = () => {
-
-    document.getElementById("settingModal").style.display = "none";
-
-};
-
-window.addEventListener("click", (e) => {
-
-    const modal = document.getElementById("settingModal");
-
-    if (e.target === modal) {
-
-        modal.style.display = "none";
-
-    }
-
-});
-// =========================
-// dream.js (5/6)
-// 실시간 / Toast / Loading
-// =========================
-
-// -------------------------
-// 실시간 동기화
-// -------------------------
-
-db
-.channel("dream-update")
-.on(
-    "postgres_changes",
-    {
-        event: "*",
-        schema: "public",
-        table: "dreams"
-    },
-    async (payload) => {
-
-        if (payload.new?.id != dreamId) return;
-
-        await loadDream();
-
-        console.log("실시간 업데이트");
-
-    }
-)
-.subscribe();
-
-// -------------------------
-// Toast
-// -------------------------
-
-function toast(message){
-
-    const toast =
-        document.getElementById("toast");
-
-    toast.textContent = message;
-
-    toast.classList.add("show");
-
-    clearTimeout(window.toastTimer);
-
-    window.toastTimer = setTimeout(()=>{
-
-        toast.classList.remove("show");
-
-    },2500);
-
-}
-
-// -------------------------
-// Loading
-// -------------------------
-
-function showLoading(){
-
-    document
-    .getElementById("loadingScreen")
-    .style.display="flex";
-
-}
-
-function hideLoading(){
-
-    document
-    .getElementById("loadingScreen")
-    .style.display="none";
-
-}
-
-// -------------------------
-// 마지막 저장 시간
-// -------------------------
-
-function updateSaveTime(){
-
-    const time = new Date();
-
-    const text =
-        time.toLocaleTimeString("ko-KR",{
-
-            hour:"2-digit",
-            minute:"2-digit"
-
-        });
-
-    const target =
-        document.getElementById("lastSaveTime");
-
-    if(target){
-
-        target.textContent=text;
-
-    }
-
-}
-
-// -------------------------
-// 저장 함수 보강
-// -------------------------
-
-const originalSaveDream = saveDream;
-
-saveDream = async function(){
-
-    await originalSaveDream();
-
-    updateSaveTime();
-
-};
-
-// -------------------------
-// 페이지 이탈 확인
-// -------------------------
-
-let changed=false;
-
-document
-.querySelectorAll("input,textarea")
-.forEach(el=>{
-
-    el.addEventListener("input",()=>{
-
-        changed=true;
-
-    });
-
-});
-
-window.addEventListener("beforeunload",(e)=>{
-
-    if(!changed) return;
-
-    e.preventDefault();
-
-    e.returnValue="";
-
-});
-
-// -------------------------
-// 저장 후 상태 초기화
-// -------------------------
-
-function saveCompleted(){
-
-    changed=false;
-
-    updateSaveTime();
-
-}
-
-// -------------------------
-// 시작
-// -------------------------
-
-updateSaveTime();
-
-console.log("Dream Detail Loaded");
-// =========================
-// dream.js (6/6)
-// 최종 마무리
-// =========================
-
-// -------------------------
-// 갤러리 자동 생성
-// -------------------------
-
-function refreshGallery(){
-
-    const gallery =
-        document.getElementById("galleryGrid");
-
-    if(!gallery) return;
-
-    gallery.innerHTML="";
-
-    const images=[];
-
-    if(dream?.image){
-
-        images.push(dream.image);
-
-    }
-
-    document
-    .querySelectorAll(".relationPreview,.auPreview,.commissionPreview")
-    .forEach(img=>{
-
-        if(img.src && !img.src.includes("default.png")){
-
-            images.push(img.src);
-
-        }
-
-    });
-
-    images.forEach(src=>{
-
-        const image=document.createElement("img");
-
-        image.src=src;
-
-        image.loading="lazy";
-
-        image.onclick=()=>{
-
-            viewer.style.display="flex";
-
-            viewerImage.src=src;
-
-        };
-
-        gallery.appendChild(image);
-
-    });
-
-}
-
-// -------------------------
-// 이미지 오류 처리
-// -------------------------
-
-document.addEventListener("error",(e)=>{
-
-    if(e.target.tagName==="IMG"){
-
-        e.target.src="default.png";
-
-    }
-
-},true);
-
-// -------------------------
-// 모바일 메뉴 스크롤
-// -------------------------
-
-const tabMenu=document.querySelector(".tabMenu");
-
-if(tabMenu){
-
-    let startX=0;
-
-    tabMenu.addEventListener("touchstart",(e)=>{
-
-        startX=e.touches[0].clientX;
-
-    });
-
-    tabMenu.addEventListener("touchmove",(e)=>{
-
-        const move=startX-e.touches[0].clientX;
-
-        tabMenu.scrollLeft+=move;
-
-        startX=e.touches[0].clientX;
-
-    });
-
-}
-
-// -------------------------
-// ESC
-// -------------------------
-
-document.addEventListener("keydown",(e)=>{
-
-    if(e.key==="Escape"){
-
-        viewer.style.display="none";
-
-        const modal=document.getElementById("settingModal");
-
-        if(modal){
-
-            modal.style.display="none";
-
-        }
-
-    }
-
-});
-
-// -------------------------
-// 저장 후 갤러리 갱신
-// -------------------------
-
-const oldSave=saveDream;
-
-saveDream=async function(){
-
-    await oldSave();
-
-    refreshGallery();
-
-    saveCompleted();
-
-};
-
-// -------------------------
-// 첫 실행
-// -------------------------
-
-refreshGallery();
-
-console.log("Dream Archive Ready 🚀");
