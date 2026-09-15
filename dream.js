@@ -457,75 +457,122 @@ function addAU(){
 // -------------------------
 
 function addCommission(){
+// ==========================
+// 커미션 추가
+// ==========================
 
-    const card=document.createElement("div");
+document.getElementById("addCommission").onclick = createCommission;
 
-    card.className="commissionCard";
+function createCommission(data = {}) {
 
-    card.innerHTML=`
+    const card = document.createElement("div");
+
+    card.className = "commissionCard";
+
+    card.innerHTML = `
 
 <div>
 
-<input type="file" class="commissionImage" accept="image/*" hidden>
+<input
+type="file"
+accept="image/*"
+class="commissionImage"
+hidden>
 
-<img class="commissionPreview" src="default.png">
+<img
+class="commissionPreview"
+src="${data.image || "default.png"}">
 
-<button type="button" class="selectCommissionImage">
+<button
+type="button"
+class="selectCommissionImage">
+
 사진 선택
+
 </button>
 
 </div>
 
 <div class="commissionInfo">
 
-<input class="artistName" placeholder="작가">
+<input
+class="artistName"
+placeholder="작가"
+value="${data.artist || ""}">
 
-<input class="commissionLink" placeholder="링크">
+<input
+class="commissionLink"
+placeholder="링크"
+value="${data.link || ""}">
 
-<textarea class="commissionMemo" placeholder="메모"></textarea>
+<textarea
+class="commissionMemo"
+placeholder="메모">${data.memo || ""}</textarea>
 
-<button type="button" class="deleteCommission">
+<button
+type="button"
+class="saveCommission">
+
+저장
+
+</button>
+
+<button
+type="button"
+class="deleteCommission">
+
 삭제
+
 </button>
 
 </div>
 
 `;
 
-    const input=card.querySelector(".commissionImage");
-    const preview=card.querySelector(".commissionPreview");
+    document
+        .getElementById("commissionList")
+        .appendChild(card);
 
-    card.querySelector(".selectCommissionImage").onclick=()=>{
+    const fileInput = card.querySelector(".commissionImage");
+    const preview = card.querySelector(".commissionPreview");
 
-        input.click();
+    let selectedFile = null;
+
+    card.querySelector(".selectCommissionImage").onclick = () => {
+
+        fileInput.click();
 
     };
 
-    input.onchange=(e)=>{
+    fileInput.onchange = e => {
 
-        const file=e.target.files[0];
+        selectedFile = e.target.files[0];
 
-        if(!file) return;
+        if (!selectedFile) return;
 
-        const reader=new FileReader();
+        const reader = new FileReader();
 
-        reader.onload=()=>{
+        reader.onload = () => {
 
-            preview.src=reader.result;
+            preview.src = reader.result;
 
         };
 
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(selectedFile);
 
     };
 
-    card.querySelector(".deleteCommission").onclick=()=>{
+    card.querySelector(".saveCommission").onclick = () => {
 
-        card.remove();
+        saveCommission(card, selectedFile);
 
     };
 
-    document.getElementById("commissionList").appendChild(card);
+    card.querySelector(".deleteCommission").onclick = () => {
+
+        deleteCommission(card, data.id);
+
+    };
 
 }
 
