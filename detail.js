@@ -85,6 +85,23 @@ async function createCharacter(title="새 캐릭터"){
     characterList.appendChild(card);
 
 }
+const { error } = await db
+.from("characters")
+.insert({
+
+    archive_id: archiveId,
+
+    name: title,
+
+    role: title
+
+});
+
+if(error){
+
+    alert(error.message);
+
+}
 // --------------------------
 // 카드 기능
 // --------------------------
