@@ -1,31 +1,31 @@
-// =========================
+// =======================================
 // Character Archive
-// archive.js (1/6)
-// =========================
+// archive.js
+// =======================================
 
 let user = null;
-let characters = [];
+let archives = [];
 let currentFilter = "all";
 
-// -------------------------
+// ----------------------
 // 시작
-// -------------------------
+// ----------------------
 
 window.addEventListener("DOMContentLoaded", async () => {
 
     await checkLogin();
 
-    await loadCharacters();
-
     bindButtons();
 
-    applyTheme();
+    bindFilters();
+
+    await loadArchives();
 
 });
 
-// -------------------------
+// ----------------------
 // 로그인 확인
-// -------------------------
+// ----------------------
 
 async function checkLogin(){
 
@@ -49,299 +49,189 @@ async function checkLogin(){
 
 }
 
-// -------------------------
-// 캐릭터 불러오기
-// -------------------------
+// ----------------------
+// 버튼
+// ----------------------
 
-async function loadCharacters(){
+function bindButtons(){
+
+    document.getElementById("logoutBtn").onclick = logout;
+
+    document.getElementById("themeBtn").onclick = ()=>{
+
+        document.getElementById("themeModal").style.display="flex";
+
+    };
+
+    document.getElementById("closeTheme").onclick = ()=>{
+
+        document.getElementById("themeModal").style.display="none";
+
+    };
+
+    document.getElementById("addCharacter").onclick = ()=>{
+
+        document.getElementById("createModal").style.display="flex";
+
+    };
+
+    document.getElementById("closeModal").onclick = ()=>{
+
+        document.getElementById("createModal").style.display="none";
+
+    };
+
+}
+// ----------------------
+// 아카이브 불러오기
+// ----------------------
+
+async function loadArchives(){
 
     const { data, error } = await db
 
-        .from("dreams")
+        .from("archives")
 
         .select("*")
 
         .eq("user_id", user.id)
 
-        .order("created_at",{
-            ascending:false
-        });
+        .order("created_at", { ascending:false });
 
     if(error){
 
         alert(error.message);
+
         return;
 
     }
 
-    characters = data || [];
+    archives = data || [];
 
-    renderCharacters();
+    renderCards();
 
 }
-// =========================
-// archive.js (2/6)
-// 카드 생성
-// =========================
 
-// -------------------------
-// 카드 출력
-// -------------------------
+// ----------------------
+// 카드 그리기
+// ----------------------
 
-function renderCharacters(){
+function renderCards(){
 
     const container = document.getElementById("cardContainer");
 
     container.innerHTML = "";
 
-    let list = characters;
+    let list = archives;
 
     if(currentFilter !== "all"){
 
-        list = characters.filter(c=>c.type===currentFilter);
+        list = archives.filter(a => a.type === currentFilter);
 
     }
 
-    list.forEach(createCard);
-
-}
-
-// -------------------------
-// 카드 생성
-// -------------------------
-
-function createCard(character){
-
-    const card = document.createElement("div");
-
-    card.className = "characterCard";
-
-    const image = character.image || "default.png";
-
-    const intro = character.intro || "";
-
-    const typeText = getTypeName(character.type);
-
-    const dday = getDDay(character.start_date);
-
-    card.innerHTML = `
-
-<img
-class="characterImage"
-src="${image}"
-onerror="this.src='default.png'">
-
-<div class="characterBody">
-
-<div class="characterType">
-
-${typeText}
-
-</div>
-
-<h2 class="characterName">
-
-${character.name || "이름 없음"}
-
-</h2>
-
-<p class="characterIntro">
-
-${intro}
-
-</p>
-
-<div class="characterBottom">
-
-<span class="dday">
-
-${dday}
-
-</span>
-
-<button
-class="shareBtn"
-type="button">
-
-🔗
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-    // 카드 클릭
-    card.onclick = ()=>{
-
-        location.href =
-        `detail.html?id=${character.id}`;
-
-    };
-
-    // 공유 버튼
-    card.querySelector(".shareBtn").onclick=(e)=>{
-
-        e.stopPropagation();
-
-        copyShareLink(character.id);
-
-    };
-
-    document
-    .getElementById("cardContainer")
-    .appendChild(card);
-
-}
-
-// -------------------------
-// 타입 이름
-// -------------------------
-
-function getTypeName(type){
-
-    if(type==="dream") return "드림";
-
-    if(type==="pair") return "페어";
-
-    if(type==="oc") return "자캐";
-
-    return "기타";
-
-}
-
-// -------------------------
-// D-Day
-// -------------------------
-
-function getDDay(date){
-
-    if(!date) return "-";
-
-    const start = new Date(date);
-
-    const today = new Date();
-
-    const diff =
-    Math.floor(
-        (today-start)/(1000*60*60*24)
-    );
-
-    return `D+${diff}`;
-
-}
-// =========================
-// archive.js (3/6)
-// 필터 / 생성 / 모달
-// =========================
-
-// -------------------------
-// 버튼 연결
-// -------------------------
-
-function bindButtons(){
-
-    // 로그아웃
-    document.getElementById("logoutBtn").onclick = logout;
-
-    // +
-    document.getElementById("addCharacter").onclick = ()=>{
-
-        document
-        .getElementById("createModal")
-        .classList.add("show");
-
-    };
-
-    // 닫기
-    document.getElementById("closeModal").onclick = ()=>{
-
-        document
-        .getElementById("createModal")
-        .classList.remove("show");
-
-    };
-
-    // 필터
-    document.querySelectorAll(".filter").forEach(btn=>{
-
-        btn.onclick=()=>{
-
-            document
-            .querySelectorAll(".filter")
-            .forEach(b=>b.classList.remove("active"));
-
-            btn.classList.add("active");
-
-            currentFilter=btn.dataset.type;
-
-            renderCharacters();
-
-        };
-
-    });
-
-    // 생성 버튼
-    document.querySelectorAll(".createType").forEach(btn=>{
-
-        btn.onclick=()=>{
-
-            createCharacter(btn.dataset.type);
-
-        };
-
-    });
-
-}
-
-// -------------------------
-// 새 캐릭터
-// -------------------------
-
-async function createCharacter(type){
-
-    const { data, error } = await db
-
-        .from("dreams")
-
-        .insert({
-
-            user_id:user.id,
-
-            type:type,
-
-            name:"새 캐릭터",
-
-            intro:"",
-
-            image:"",
-
-            start_date:null
-
-        })
-
-        .select()
-
-        .single();
-
-    if(error){
-
-        alert(error.message);
+    if(list.length === 0){
+
+        container.innerHTML = `
+        <p style="
+        text-align:center;
+        color:#888;
+        padding:60px;">
+        아직 아무것도 없습니다.
+        </p>
+        `;
 
         return;
 
     }
 
-    location.href =
-    `detail.html?id=${data.id}`;
+    list.forEach(item=>{
+
+        const card=document.createElement("div");
+
+        card.className="archiveCard";
+
+        card.innerHTML=`
+
+        <img src="${item.cover || "default.png"}">
+
+        <div class="archiveInfo">
+
+            <h2>${item.title || "제목 없음"}</h2>
+
+            <p>${typeName(item.type)}</p>
+
+            <span>${item.intro || ""}</span>
+
+        </div>
+
+        `;
+
+        card.onclick=()=>{
+
+            location.href=
+            `detail.html?id=${item.id}`;
+
+        };
+
+        container.appendChild(card);
+
+    });
 
 }
 
-// -------------------------
+// ----------------------
+// 타입 이름
+// ----------------------
+
+function typeName(type){
+
+    switch(type){
+
+        case "dream":
+            return "드림";
+
+        case "pair":
+            return "페어";
+
+        case "oc":
+            return "자캐";
+
+        default:
+            return "";
+
+    }
+
+}
+// ----------------------
+// 필터
+// ----------------------
+
+function bindFilters(){
+
+    const filters=document.querySelectorAll(".filter");
+
+    filters.forEach(btn=>{
+
+        btn.onclick=()=>{
+
+            filters.forEach(f=>f.classList.remove("active"));
+
+            btn.classList.add("active");
+
+            currentFilter=btn.dataset.type;
+
+            renderCards();
+
+        };
+
+    });
+
+}
+
+// ----------------------
 // 로그아웃
-// -------------------------
+// ----------------------
 
 async function logout(){
 
@@ -350,304 +240,60 @@ async function logout(){
     location.href="login.html";
 
 }
-// =========================
-// archive.js (4/6)
-// 테마
-// =========================
+// ----------------------
+// 새 아카이브 만들기
+// ----------------------
 
-// -------------------------
-// 테마 버튼
-// -------------------------
+document.querySelectorAll(".createType").forEach(btn=>{
 
-document.getElementById("themeBtn").onclick = ()=>{
+    btn.onclick = async ()=>{
 
-    document
-    .getElementById("themeModal")
-    .classList.add("show");
+        const type = btn.dataset.type;
 
-};
+        const title = prompt("제목을 입력하세요.");
 
-// -------------------------
-// 닫기
-// -------------------------
+        if(!title) return;
 
-document.getElementById("closeTheme").onclick = ()=>{
+        const { data, error } = await db
 
-    document
-    .getElementById("themeModal")
-    .classList.remove("show");
+            .from("archives")
 
-};
+            .insert({
 
-// -------------------------
-// 테마 선택
-// -------------------------
+                user_id:user.id,
 
-document.querySelectorAll(".theme").forEach(btn=>{
+                type:type,
 
-    btn.onclick=()=>{
+                title:title,
 
-        const theme=btn.dataset.theme;
+                intro:"",
 
-        localStorage.setItem(
-            "archiveTheme",
-            theme
-        );
+                cover:"",
 
-        applyTheme();
+                theme:"pink"
 
-        document
-        .getElementById("themeModal")
-        .classList.remove("show");
+            })
+
+            .select()
+
+            .single();
+
+        if(error){
+
+            alert(error.message);
+
+            return;
+
+        }
+
+        archives.unshift(data);
+
+        renderCards();
+
+        document.getElementById("createModal").style.display="none";
+
+        location.href=`detail.html?id=${data.id}`;
 
     };
 
 });
-
-// -------------------------
-// 적용
-// -------------------------
-
-function applyTheme(){
-
-    const theme=
-        localStorage.getItem("archiveTheme")
-        ||"pink";
-
-    document.body.className=
-        `theme-${theme}`;
-
-}
-
-// -------------------------
-// 모달 바깥 클릭
-// -------------------------
-
-window.addEventListener("click",(e)=>{
-
-    const create=document.getElementById("createModal");
-
-    const theme=document.getElementById("themeModal");
-
-    if(e.target===create){
-
-        create.classList.remove("show");
-
-    }
-
-    if(e.target===theme){
-
-        theme.classList.remove("show");
-
-    }
-
-});
-// =========================
-// archive.js (5/6)
-// 공유 / Toast / 애니메이션
-// =========================
-
-// -------------------------
-// 공유 링크
-// -------------------------
-
-async function copyShareLink(id){
-
-    const url =
-        `${location.origin}${location.pathname.replace("archive.html","")}share.html?id=${id}`;
-
-    try{
-
-        await navigator.clipboard.writeText(url);
-
-        toast("공유 링크가 복사되었습니다.");
-
-    }catch{
-
-        prompt("링크를 복사하세요.",url);
-
-    }
-
-}
-
-// -------------------------
-// Toast
-// -------------------------
-
-function toast(message){
-
-    let toast=document.getElementById("toast");
-
-    if(!toast){
-
-        toast=document.createElement("div");
-
-        toast.id="toast";
-
-        document.body.appendChild(toast);
-
-    }
-
-    toast.textContent=message;
-
-    toast.classList.add("show");
-
-    clearTimeout(window.toastTimer);
-
-    window.toastTimer=setTimeout(()=>{
-
-        toast.classList.remove("show");
-
-    },2500);
-
-}
-
-// -------------------------
-// 카드 등장 애니메이션
-// -------------------------
-
-function animateCards(){
-
-    const cards=document.querySelectorAll(".characterCard");
-
-    cards.forEach((card,index)=>{
-
-        card.style.opacity="0";
-
-        card.style.transform="translateY(25px)";
-
-        setTimeout(()=>{
-
-            card.style.transition=".35s";
-
-            card.style.opacity="1";
-
-            card.style.transform="translateY(0)";
-
-        },index*70);
-
-    });
-
-}
-
-// -------------------------
-// renderCharacters 교체
-// -------------------------
-
-const originalRender = renderCharacters;
-
-renderCharacters = function(){
-
-    originalRender();
-
-    animateCards();
-
-};
-
-// -------------------------
-// 첫 실행
-// -------------------------
-
-applyTheme();
-
-renderCharacters();
-// =========================
-// archive.js (6/6)
-// 최종 마무리
-// =========================
-
-// -------------------------
-// Realtime
-// -------------------------
-
-db.channel("archive")
-
-.on(
-
-"postgres_changes",
-
-{
-
-event:"*",
-
-schema:"public",
-
-table:"dreams"
-
-},
-
-()=>{
-
-    loadCharacters();
-
-}
-
-)
-
-.subscribe();
-
-// -------------------------
-// 이미지 오류
-// -------------------------
-
-document.addEventListener("error",(e)=>{
-
-    if(e.target.tagName==="IMG"){
-
-        e.target.src="default.png";
-
-    }
-
-},true);
-
-// -------------------------
-// 모바일 부드럽게
-// -------------------------
-
-document.documentElement.style.scrollBehavior="smooth";
-
-// -------------------------
-// ESC
-// -------------------------
-
-document.addEventListener("keydown",(e)=>{
-
-    if(e.key==="Escape"){
-
-        document
-        .getElementById("createModal")
-        .classList.remove("show");
-
-        document
-        .getElementById("themeModal")
-        .classList.remove("show");
-
-    }
-
-});
-
-// -------------------------
-// Lazy Image
-// -------------------------
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-    document
-    .querySelectorAll("img")
-    .forEach(img=>{
-
-        img.loading="lazy";
-
-    });
-
-});
-
-// -------------------------
-// 첫 실행
-// -------------------------
-
-applyTheme();
-
-loadCharacters();
-
-console.log("Character Archive Ready 🚀");
