@@ -525,3 +525,441 @@ document.getElementById("deleteDream").onclick=async()=>{
     }
 
 };
+
+// =========================
+// dream.js (4/6)
+// Viewer / JSON / Auto Save
+// =========================
+
+// 이미지 확대
+const viewer = document.getElementById("imageViewer");
+const viewerImage = document.getElementById("viewerImage");
+
+document.getElementById("previewImage").onclick = () => {
+    viewer.style.display = "flex";
+    viewerImage.src = document.getElementById("previewImage").src;
+};
+
+document.getElementById("closeViewer").onclick = () => {
+    viewer.style.display = "none";
+};
+
+viewer.onclick = (e) => {
+    if (e.target === viewer) {
+        viewer.style.display = "none";
+    }
+};
+
+// -------------------------
+// JSON 백업
+// -------------------------
+
+document.getElementById("exportJSON").onclick = () => {
+
+    const blob = new Blob(
+        [JSON.stringify(dream, null, 2)],
+        { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = `${dream.name}.json`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    toast("JSON 백업 완료");
+
+};
+
+// -------------------------
+// JSON 불러오기
+// -------------------------
+
+document.getElementById("importJSON").onclick = () => {
+
+    document.getElementById("jsonFile").click();
+
+};
+
+document.getElementById("jsonFile").addEventListener("change", async (e)=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    try{
+
+        const text = await file.text();
+
+        const json = JSON.parse(text);
+
+        dream = {
+            ...dream,
+            ...json
+        };
+
+        fillData();
+
+        toast("불러오기 완료");
+
+    }catch{
+
+        alert("올바른 JSON 파일이 아닙니다.");
+
+    }
+
+});
+
+// -------------------------
+// 자동 저장
+// -------------------------
+
+let autoSaveTimer;
+
+document.querySelectorAll("input, textarea").forEach(el=>{
+
+    el.addEventListener("input",()=>{
+
+        clearTimeout(autoSaveTimer);
+
+        autoSaveTimer = setTimeout(async ()=>{
+
+            await saveDream();
+
+        },1500);
+
+    });
+
+});
+
+// -------------------------
+// Ctrl + S
+// -------------------------
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.ctrlKey && e.key==="s"){
+
+        e.preventDefault();
+
+        saveDream();
+
+    }
+
+});
+
+// -------------------------
+// 설정창 닫기
+// -------------------------
+
+document.getElementById("closeSetting").onclick = ()=>{
+
+    document.getElementById("settingModal").style.display="none";
+
+};
+
+window.addEventListener("click",(e)=>{
+
+    const modal=document.getElementById("settingModal");
+
+    if(e.target===modal){
+
+        modal.style.display="none";
+
+    }
+
+});
+
+// =========================
+// dream.js (5/6)
+// 실시간 / Toast / Loading
+// =========================
+
+// -------------------------
+// 실시간 동기화
+// -------------------------
+
+db.channel("dream-update")
+
+.on(
+
+"postgres_changes",
+
+{
+
+event:"UPDATE",
+
+schema:"public",
+
+table:"dreams"
+
+},
+
+async(payload)=>{
+
+    if(String(payload.new.id)!==String(dreamId)) return;
+
+    await loadDream();
+
+}
+
+)
+
+.subscribe();
+
+// -------------------------
+// Toast
+// -------------------------
+
+function toast(message){
+
+    const toast=document.getElementById("toast");
+
+    toast.textContent=message;
+
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer=setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+    },2500);
+
+}
+
+// -------------------------
+// Loading
+// -------------------------
+
+function showLoading(){
+
+    document.getElementById("loadingScreen").style.display="flex";
+
+}
+
+function hideLoading(){
+
+    document.getElementById("loadingScreen").style.display="none";
+
+}
+
+// -------------------------
+// 마지막 저장 시간
+// -------------------------
+
+function updateSaveTime(){
+
+    const target=document.getElementById("lastSaveTime");
+
+    if(!target) return;
+
+    target.textContent=new Date().toLocaleTimeString("ko-KR",{
+
+        hour:"2-digit",
+
+        minute:"2-digit"
+
+    });
+
+}
+
+// -------------------------
+// 저장 완료
+// -------------------------
+
+function saveCompleted(){
+
+    changed=false;
+
+    updateSaveTime();
+
+}
+
+// -------------------------
+// 변경 감지
+// -------------------------
+
+let changed=false;
+
+document.querySelectorAll("input,textarea").forEach(el=>{
+
+    el.addEventListener("input",()=>{
+
+        changed=true;
+
+    });
+
+});
+
+// -------------------------
+// 페이지 나가기
+// -------------------------
+
+window.addEventListener("beforeunload",(e)=>{
+
+    if(!changed) return;
+
+    e.preventDefault();
+
+    e.returnValue="";
+
+});
+
+// -------------------------
+// 시작
+// -------------------------
+
+updateSaveTime();
+
+console.log("Dream Detail Loaded");
+// =========================
+// dream.js (6/6)
+// 최종 마무리
+// =========================
+
+// -------------------------
+// 갤러리
+// -------------------------
+
+function refreshGallery(){
+
+    const gallery=document.getElementById("galleryGrid");
+
+    if(!gallery) return;
+
+    gallery.innerHTML="";
+
+    if(!dream) return;
+
+    const images=[];
+
+    if(dream.image){
+
+        images.push(dream.image);
+
+    }
+
+    images.forEach(src=>{
+
+        const img=document.createElement("img");
+
+        img.src=src;
+
+        img.loading="lazy";
+
+        img.onclick=()=>{
+
+            viewer.style.display="flex";
+
+            viewerImage.src=src;
+
+        };
+
+        gallery.appendChild(img);
+
+    });
+
+}
+
+// -------------------------
+// 이미지 오류
+// -------------------------
+
+document.addEventListener("error",(e)=>{
+
+    if(e.target.tagName==="IMG"){
+
+        e.target.src="default.png";
+
+    }
+
+},true);
+
+// -------------------------
+// 모바일 탭 스크롤
+// -------------------------
+
+const tabMenu=document.querySelector(".tabMenu");
+
+if(tabMenu){
+
+    let startX=0;
+
+    tabMenu.addEventListener("touchstart",(e)=>{
+
+        startX=e.touches[0].clientX;
+
+    });
+
+    tabMenu.addEventListener("touchmove",(e)=>{
+
+        const move=startX-e.touches[0].clientX;
+
+        tabMenu.scrollLeft+=move;
+
+        startX=e.touches[0].clientX;
+
+    });
+
+}
+
+// -------------------------
+// ESC
+// -------------------------
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape"){
+
+        viewer.style.display="none";
+
+        const modal=document.getElementById("settingModal");
+
+        if(modal){
+
+            modal.style.display="none";
+
+        }
+
+    }
+
+});
+
+// -------------------------
+// 저장 후 처리
+// -------------------------
+
+async function afterSave(){
+
+    refreshGallery();
+
+    saveCompleted();
+
+}
+
+// saveDream 실행 후 후처리
+const originalSave = saveDream;
+
+saveDream = async function(){
+
+    await originalSave();
+
+    await afterSave();
+
+};
+
+// -------------------------
+// 첫 실행
+// -------------------------
+
+refreshGallery();
+
+console.log("Dream Archive Ready 🚀");
