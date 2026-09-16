@@ -25,6 +25,6 @@ loginForm.addEventListener("submit", async (e) => {
         return;
     }
 
-    location.href = "index.html";
+  location.href = "archive.html";
 
 });
