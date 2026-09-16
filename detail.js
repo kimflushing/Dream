@@ -25,12 +25,21 @@ window.addEventListener("DOMContentLoaded",()=>{
 // --------------------------
 // 버튼
 // --------------------------
-
 function bindEvents(){
 
     document
     .getElementById("addCharacter")
-    .onclick=createCharacter;
+    .onclick=async()=>{
+
+        const name=prompt("캐릭터 이름");
+
+        if(!name) return;
+
+        await saveCharacter(name);
+
+        await createDefaultCharacters();
+
+    };
 
 }
 
@@ -38,29 +47,80 @@ function bindEvents(){
 // 기본 생성
 // --------------------------
 
-function createDefaultCharacters(){
+async function createDefaultCharacters(){
 
-    if(type==="dream"){
+    characterList.innerHTML="";
 
-        createCharacter("드림주");
+    const { data,error }=await db
 
-        createCharacter("드림캐");
+    .from("characters")
+
+    .select("*")
+
+    .eq("archive_id",archiveId);
+
+    if(error){
+
+        alert(error.message);
+
+        return;
+
+    }
+    async function saveCharacter(name){
+
+    const { error }=await db
+
+    .from("characters")
+
+    .insert({
+
+        archive_id:archiveId,
+
+        name:name,
+
+        role:name
+
+    });
+
+    if(error){
+
+        alert(error.message);
 
     }
 
-    else if(type==="pair"){
+    }
 
-        createCharacter("캐릭터 A");
+    if(data.length===0){
 
-        createCharacter("캐릭터 B");
+        if(type==="dream"){
+
+            await saveCharacter("드림주");
+            await saveCharacter("드림캐");
+
+        }
+
+        else if(type==="pair"){
+
+            await saveCharacter("캐릭터 A");
+            await saveCharacter("캐릭터 B");
+
+        }
+
+        else{
+
+            await saveCharacter("자캐");
+
+        }
+
+        return createDefaultCharacters();
 
     }
 
-    else{
+    data.forEach(c=>{
 
-        createCharacter("자캐");
+        createCharacter(c.name);
 
-    }
+    });
 
 }
 
