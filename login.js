@@ -4,7 +4,7 @@ const loginForm = document.getElementById("loginForm");
     const { data } = await db.auth.getSession();
 
     if (data.session) {
-        location.href = "index.html";
+        location.href = "archive.html";
     }
 })();
 
