@@ -1,3 +1,4 @@
+alert("archive.js 실행됨");
 // =======================================
 // Character Archive
 // archive.js
